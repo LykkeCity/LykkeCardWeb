@@ -1,11 +1,13 @@
 import {inject, observer} from 'mobx-react';
 import * as React from 'react';
 import {CardModel, CardType} from '../../models/index';
+import {UiStore} from '../../stores/';
 import {RootStore} from '../../stores/index';
 import {Bordered} from '../Bordered/index';
 import {Button} from '../Button/index';
 import {FormGroup, Input, Label, Select} from '../Form/index';
 import {RadioGroup} from '../Form/Radio';
+import {OrderCardWindow} from '../OrderCardWindow/OrderCardWindow';
 import {Title} from '../Typography/index';
 
 // tslint:disable-next-line:no-var-requires
@@ -51,9 +53,10 @@ const CardTypePicker = ({items, value, onChange}: CardTypePickerProps) => (
 
 interface CardFormProps {
   card?: CardModel;
+  uiStore?: UiStore;
 }
 
-export const CardForm: React.SFC<CardFormProps> = ({card}) => {
+export const CardForm: React.SFC<CardFormProps> = ({card, uiStore}) => {
   if (!card) {
     return null;
   }
@@ -63,6 +66,9 @@ export const CardForm: React.SFC<CardFormProps> = ({card}) => {
   const handleChangeAsset = (e: any) =>
     card.update({asset: e.currentTarget.value});
   const handleChangeType = (type: any) => card.update({type});
+
+  const toggleWindow = () =>
+    (uiStore!.showOrderCardWindow = !uiStore!.showOrderCardWindow);
 
   return (
     <div>
@@ -148,12 +154,20 @@ export const CardForm: React.SFC<CardFormProps> = ({card}) => {
         </FormGroup>
       </section>
       <Flex mt={60}>
-        <Button w={'100%'}>Proceed</Button>
+        <Button w={'100%'} onClick={toggleWindow}>
+          Proceed
+        </Button>
       </Flex>
+      <OrderCardWindow
+        card={card}
+        show={uiStore!.showOrderCardWindow!}
+        onClose={toggleWindow}
+      />
     </div>
   );
 };
 
-export default inject(({cardStore: {newCard: card}}: RootStore) => ({
-  card
+export default inject(({cardStore: {newCard: card}, uiStore}: RootStore) => ({
+  card,
+  uiStore
 }))(observer(CardForm));
