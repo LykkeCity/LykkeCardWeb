@@ -1,9 +1,11 @@
 import {CardModel} from '../models/index';
 
 export interface CardApi {
-  order: (card: CardModel) => Promise<any>;
+  order: (card: Partial<CardModel>) => Promise<any>;
 }
 
 export class RestCardApi implements CardApi {
-  order = (card: any) => Promise.resolve({id: new Date().getUTCDate()});
+  order = (card: Partial<CardModel>) => Promise.resolve(card.asJson);
 }
+
+export default RestCardApi;

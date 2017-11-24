@@ -25,7 +25,12 @@ export class CardModel {
     console.log(this.store);
   }
 
-  update = (props: Partial<CardModel>) => extendObservable(this, props);
+  update = (props: Partial<this>) => extendObservable(this, props);
+
+  order = async () => {
+    const card = await this.store.orderCard(this);
+    extendObservable(this, card);
+  };
 }
 
 export default CardModel;
