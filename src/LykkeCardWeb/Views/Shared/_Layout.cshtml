@@ -1,0 +1,37 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,minimal-ui,user-scalable=no">
+    <meta http-equiv="x-ua-compatible" content="ie=edge">
+    <title>Lykke Visa Card</title>
+    <meta name="description" content="The new Lykke Card: the quickest way to access your new assets">
+    <link rel="apple-touch-icon" href="apple-touch-icon.png" sizes="180x180">
+    <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
+    <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
+
+    @RenderSection("Head", required: false) 
+
+    <environment include="Development">
+        <link href="~/css/styles.css" rel="stylesheet" />
+        <link href="~/css/styles-custom.css" rel="stylesheet" />
+    </environment>
+    <environment include="Staging,Production">
+        <link href="~/dist/styles.min.css" rel="stylesheet" />
+    </environment>
+</head>
+<body>
+    @Html.Partial("_Menu")
+    @RenderBody()
+    @Html.Partial("_Footer")
+
+    <environment include="Development">
+        <script src="~/js/site.js"></script>
+    </environment>
+    <environment include="Staging,Production">
+        <script src="~/dist/site.min.js"></script>
+    </environment>
+
+    @RenderSection("Scripts", required: false) 
+</body>
+</html>

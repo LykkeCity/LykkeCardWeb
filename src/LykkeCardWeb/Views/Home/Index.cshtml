@@ -1,0 +1,286 @@
+﻿<section class="section section_lead" id="lead">
+    <div class="container">
+        <div class="vertical_align">
+            <div class="vertical_align__row">
+                <div class="vertical_align__cell">
+                    <h1 class="section_title">Lykke Means Liquidity</h1>
+                    <h2 class="section_subtitle">
+                        The new Lykke Card: the quickest way to
+                        <br>access your new assets
+                    </h2>
+                    <div class="section_img"><img src="/images/card_hero_visa.jpg" class="floating" width="1300" alt="card"></div>
+                    @if (!User.Identity.IsAuthenticated)
+                    {
+                        <form class="form form_request">
+                         <div class="form_group">
+                             <a href="@Url.Action("SignIn", "Home")" class="btn btn-block btn--primary">Sign in</a>
+                         </div>
+                        </form>
+                    }
+                    
+                </div>
+            </div>
+        </div>
+    </div>
+    <div class="link_scroll_down">Scroll down</div>
+</section>
+<section class="section section_about" id="about">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-6">
+                <p class="accent">Lykke just made life easier, again. Introducing Lykke Card.</p>
+                <p class="accent">Your passport to your Lykke Wallet, wherever Visa is accepted.</p>
+                <p class="lead">Not sure how to get started with Lykke Card?&nbsp <br class="visible-lg"> Contact us at <a href="mailto:support@lykke.com">support@lykke.com</a></p>
+                <hr>
+                <h3>Access Your Equity Easily.</h3>
+                <p class="text-muted">Enjoy the money that you’ve made! The new Lykke Card gives you free and clear access to the funds in your Lykke Wallet. It puts all your currencies at your fingertips.</p>
+                <div class="counter">
+                    <h3>Be in the first thousand and try it for free!</h3>
+                    @*<span class="counter__accent">@Model.RemainingCards</span> / @Model.TotalCards free cards*@
+                </div>
+            </div>
+            <div class="col-sm-6">
+                <div class="section_img section_img--phone"><img src="/images/phone_app.jpg" class="floating_phone" width="596" alt="phone"></div>
+                <div class="section_img section_img--card"><img src="/images/card_visa.png" class="floating_card" width="375" alt="card"></div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container container_separator"><hr></div>
+<section class="section section_features" id="features">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-10 automargin">
+                <div class="section_header">
+                    <div class="section_icon"><img src="/images/features_icn.svg" width="72px" alt="features"></div>
+                    <div class="hint">Benefits</div>
+                    <div class="section_title">Explore the World of Financial Opportunities</div>
+                </div>
+                <div class="list list_features">
+                    <div class="list_row row">
+                        <div class="list_item col-xs-6">
+                            <h3 class="list_item__title">Shop. Play. Treat.</h3>
+                            <div class="list_item__text">Surprise your mother with a full tank of gas. Take your nephew to the movies. Send flowers to your boss. Lykke Card can be used to purchase anything, anywhere Visa is accepted — in stores, online, and via mobile.</div>
+                        </div>
+                        <div class="list_item col-xs-6">
+                            <h3 class="list_item__title">Travel Anywhere and Feel like a Local.</h3>
+                            <div class="list_item__text">Get your hands on local currency at millions of ATMs worldwide. Wherever you see the Visa logo, your Lykke funds are in reach. For business and pleasure.</div>
+                        </div>
+                    </div>
+                    <div class="list_row row">
+                        <div class="list_item col-xs-6">
+                            <h3 class="list_item__title">Trade Up to the Lowest Exchange Rates.</h3>
+                            <div class="list_item__text">Lykke Card holders enjoy the lowest friction in the industry. Lykke’s proprietary Alpha Engine guarantees the best exchange rates possible, saving you money on every purchase.</div>
+                        </div>
+                        <div class="list_item col-xs-6">
+                            <h3 class="list_item__title">SWIFT is SLOW...</h3>
+                            <div class="list_item__text">... and Lykke Card is like cash with wings. Send money faster and more easily than ever with Lykke Card. Forget about those clunky bank codes, and smile while your money zips to its destination.</div>
+                        </div>
+                    </div>
+                    <div class="list_row row">
+                        <div class="list_item col-xs-6">
+                            <h3 class="list_item__title">Safe and Secure.</h3>
+                            <div class="list_item__text">Lykke Wallet and Lykke Exchange are trusted by traders and investors worldwide. The pioneering Lykke Card is protected by the suite of the suite of Visa security features, including fraud detection and zero liability. Even better, Lykke uses rock-solid blockchain technology for audit trails.</div>
+                        </div>
+                        <div class="list_item col-xs-6">
+                            <h3 class="list_item__title">24/7 + 360º = 8-)</h3>
+                            <div class="list_item__text">Manage your account, monitor your activity, and track your purchases via the Lykke Card mobile phone app. Anytime. Anywhere.</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container container_separator"><hr></div>
+<section class="section section_fees" id="fees">
+    <div class="container">
+        <div class="section_header">
+            <div class="section_icon"><img src="/images/fees_icn.svg" width="64px" alt="fees"></div>
+            <div class="hint">Card fees</div>
+            <div class="section_title">The Power of Limits</div>
+        </div>
+        <table class="table table_fees">
+            <tbody class="hidden-small">
+                <tr>
+                    <th class="_fees">Fees</th>
+                    <th class="_cur">EUR</th>
+                    <th class="_cur">GBP</th>
+                    <th class="_cur">USD</th>
+                </tr>
+            </tbody>
+            <tbody class="_first">
+                <tr>
+                    <td class="_fees">Plastic Card Issuance and Delivery with Tracking</td>
+                    <td class="_cur">
+                        <div class="_title">EUR</div>
+                        <div class="_value">20</div>
+                    </td>
+                    <td class="_cur">
+                        <div class="_title">GBP</div>
+                        <div class="_value">20</div>
+                    </td>
+                    <td class="_cur">
+                        <div class="_title">USD</div>
+                        <div class="_value">20</div>
+                    </td>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+                    <td class="_fees">Upgrade for express delivery, additional fee</td>
+                    <td class="_cur">
+                        <div class="_title">EUR</div>
+                        <div class="_value">35</div>
+                    </td>
+                    <td class="_cur">
+                        <div class="_title">GBP</div>
+                        <div class="_value">30</div>
+                    </td>
+                    <td class="_cur">
+                        <div class="_title">USD</div>
+                        <div class="_value">40</div>
+                    </td>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+                    <td class="_fees">Virtual Card Issuance</td>
+                    <td class="_cur">
+                        <div class="_title">EUR</div>
+                        <div class="_value">1</div>
+                    </td>
+                    <td class="_cur">
+                        <div class="_title">GBP</div>
+                        <div class="_value">1</div>
+                    </td>
+                    <td class="_cur">
+                        <div class="_title">USD</div>
+                        <div class="_value">1</div>
+                    </td>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+                    <td class="_fees">Foreign exchange fee</td>
+                    <td class="_cur">
+                        <div class="_title">EUR</div>
+                        <div class="_value">3%</div>
+                    </td>
+                    <td class="_cur">
+                        <div class="_title">GBP</div>
+                        <div class="_value">3%</div>
+                    </td>
+                    <td class="_cur">
+                        <div class="_title">USD</div>
+                        <div class="_value">3%</div>
+                    </td>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+                    <td class="_fees">ATM Transaction *</td>
+                    <td class="_cur">
+                        <div class="_title">EUR</div>
+                        <div class="_value">2.5</div>
+                    </td>
+                    <td class="_cur">
+                        <div class="_title">GBP</div>
+                        <div class="_value">2</div>
+                    </td>
+                    <td class="_cur">
+                        <div class="_title">USD</div>
+                        <div class="_value">2.75</div>
+                    </td>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+                    <td class="_fees">Plastic Card Annual Fee</td>
+                    <td class="_cur">
+                        <div class="_title">EUR</div>
+                        <div class="_value">
+                            <p class="text-center">FREE</p>
+                            EUR 10 if the total amount spent is below EUR 3,000/year
+                        </div>
+                    </td>
+                    <td class="_cur">
+                        <div class="_title">GBP</div>
+                        <div class="_value">
+                            <p class="text-center">FREE</p>
+                            GBP 10 if the total amount spent is below GBP 3,000/year
+                        </div>
+                    </td>
+                    <td class="_cur">
+                        <div class="_title">USD</div>
+                        <div class="_value">
+                            <p class="text-center">FREE</p>
+                            USD 10 if the total amount spent is below USD 3,000/year
+                        </div>
+                    </td>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+                    <td class="_fees">Pin Change fee via ATM</td>
+                    <td class="_cur">
+                        <div class="_title">EUR</div>
+                        <div class="_value">0,8</div>
+                    </td>
+                    <td class="_cur">
+                        <div class="_title">GBP</div>
+                        <div class="_value">0,6</div>
+                    </td>
+                    <td class="_cur">
+                        <div class="_title">USD</div>
+                        <div class="_value">1</div>
+                    </td>
+                </tr>
+            </tbody>
+            <tbody>
+                <tr>
+                    <td colspan="3">
+                        <br />
+                        <p>* Please be advised that some ATMs may charge their own fees – Lykke has no control over those fees and they are excluded from the fee that Lykke has in place.</p>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+        <h3>Documents</h3>
+
+        <div class="row">
+            <div class="asset col-sm-5 col-md-3">
+                <div class="asset__icon"><img src="/images/terms_icn.svg" width="34px" alt="terms"></div>
+                <div class="asset__content">
+                    <div class="asset__title">Terms of conditions</div>
+                    <div class="asset__desc"><a href="~/media/terms-and-conditions.pdf">Download</a></div>
+                </div>
+            </div>
+            <div class="asset col-sm-5 col-md-3">
+                <div class="asset__icon"><img src="/images/countries_icn.svg" width="38px" alt="countries"></div>
+                <div class="asset__content">
+                    <div class="asset__title">List of eligible countries</div>
+                    <div class="asset__desc"><a href="@Url.Action("Countries", "Home")">View</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<div class="container container_separator"><hr></div>
+<section class="section section_request" id="request">
+    <div class="container">
+        <div class="row">
+            <div class="col-sm-7 automargin text-center">
+                <div class="section_title">Learn how Lykke has helped <b>31,139</b> people like you to trade more freely</div>
+                @if (!User.Identity.IsAuthenticated)
+                {
+                    <form class="form form_request">
+                        <div class="form_group">
+                            <a href="@Url.Action("SignIn", "Home")" class="btn btn-block btn--primary">Sign in</a>
+                        </div>
+                    </form>
+                }
+            </div>
+        </div>
+    </div>
+</section>

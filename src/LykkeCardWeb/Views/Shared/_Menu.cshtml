@@ -1,0 +1,55 @@
+﻿<header class="header _header">
+    <div class="container">
+        <div class="header__wrapper">
+            <div class="header_logo _header_logo">
+                <a href="@GetUrl("#")" class="_move_to"><img src="images/logo_white.svg" class="logo_show" width="40px" height="38px" alt="logo"> <img src="images/logo.svg" class="logo_hide" width="40px" height="38px" alt="logo"></a>
+            </div>
+
+            <div class="header_right pull-right">
+                <menu class="header_nav">
+                    @if (User.Identity.IsAuthenticated)
+                    {
+                        <li class="header_nav__item">
+                            <a href="@Url.Action("Index", "MyCards")">
+                                <span class="hidden-xs">My cards</span>
+                            </a>
+
+                            <a href="@Url.Action("LogOut", "Home")">
+                                <span class="hidden-xs">Logout</span>
+                                <i class="icon icon--exit visible-xs"></i>
+                            </a>
+                        </li>
+                    }
+                    else
+                    {
+                        <li class="header_nav__item">
+                            <a href="@Url.Action("SignIn", "Home")">
+                                <span class="hidden-xs">Sign In</span>
+                                <i class="icon icon--participate visible-xs"></i>
+                            </a>
+                        </li>
+                    }
+
+                </menu>
+            </div>
+
+            <div class="header_center">
+                <menu class="header_nav">
+                    <li class="header_nav__item"><a href="@GetUrl("#about")" class="_move_to _header_link">About</a></li>
+                    <li class="header_nav__item"><a href="@GetUrl("#features")" class="_move_to _header_link">Features</a></li>
+                    <li class="header_nav__item"><a href="@GetUrl("#fees")" class="_move_to _header_link">Fees</a></li>
+                </menu>
+            </div>
+        </div>
+    </div>
+</header>
+
+@functions
+{
+
+    string GetUrl(string hash)
+    {
+        return $"{(ViewContext.RouteData.Values["controller"].ToString() == "Home" ? string.Empty : Url.Action("Index", "Home"))}{hash}";
+    }
+
+}
