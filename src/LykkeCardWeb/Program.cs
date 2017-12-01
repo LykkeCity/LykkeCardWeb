@@ -46,7 +46,7 @@ namespace LykkeCardWeb
                     var sertFilename = Environment.GetEnvironmentVariable("CertFileName");
                     var sertPassword = Environment.GetEnvironmentVariable("CertPassword");
 
-                    var certBlob = AzureBlobStorage.Create(new LocalSettingsReloadingManager<string>(sertConnString));
+                    var certBlob = new AzureBlobStorage(sertConnString);
                     var cert = certBlob.GetAsync(sertContainer, sertFilename).Result.ToBytes();
 
                     X509Certificate2 xcert = new X509Certificate2(cert, sertPassword);
