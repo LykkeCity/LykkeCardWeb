@@ -14,13 +14,6 @@ namespace LykkeCardWeb.Controllers
             return View();
         }
 
-        [HttpGet("auth")]
-        [HttpPost("auth")]
-        public IActionResult Auth()
-        {
-            return RedirectToAction("Index", User.Identity.IsAuthenticated ? "MyCards" : "Home");
-        }
-
         [HttpGet("countries")]
         public IActionResult Countries()
         {
