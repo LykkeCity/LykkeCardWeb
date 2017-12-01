@@ -33,7 +33,7 @@
   <ItemGroup>
     <Folder Include="wwwroot\fonts\" />
     <Folder Include="wwwroot\images\" />
-    <Folder Include="wwwroot\distr\" />
+    <Folder Include="wwwroot\dist\" />
     <Folder Include="wwwroot\vendor\" />
   </ItemGroup>
 

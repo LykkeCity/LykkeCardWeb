@@ -6,6 +6,8 @@
     }
 
     export class CardService implements ICardService {
+        static $inject = ['$http'];
+
         http: ng.IHttpService;
 
         constructor($http: ng.IHttpService) {

@@ -4,6 +4,8 @@
     }
 
     export class SubscribeService implements ISubscribeService {
+        static $inject = ['$http'];
+
         http: ng.IHttpService;
 
         constructor($http: ng.IHttpService) {

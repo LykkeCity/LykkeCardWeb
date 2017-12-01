@@ -33,19 +33,6 @@ namespace LykkeCardWeb.Controllers
             return Challenge(new AuthenticationProperties { RedirectUri = Url.Action("Index", "MyCards") });
         }
 
-        //[HttpGet("signin")]
-        //public IActionResult SignIn()
-        //{
-        //    return RedirectToActionPermanent("DoSignIn", "Home");
-        //}
-
-        //[Authorize]
-        //public IActionResult DoSignIn()
-        //{
-        //    return RedirectToAction("Index", "MyCards");
-        //}
-
-
         [HttpGet("logout")]
         public IActionResult LogOut()
         {
