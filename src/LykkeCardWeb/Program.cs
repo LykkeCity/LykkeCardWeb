@@ -1,6 +1,11 @@
 ﻿using System;
 using System.IO;
+using System.Net;
+using System.Security.Cryptography.X509Certificates;
 using System.Threading.Tasks;
+using AzureStorage.Blob;
+using Common;
+using Lykke.SettingsReader;
 using Microsoft.AspNetCore.Hosting;
 
 namespace LykkeCardWeb
@@ -21,15 +26,44 @@ namespace LykkeCardWeb
 
             try
             {
-                var host = new WebHostBuilder()
-                    .UseKestrel()
-                    .UseUrls("http://*:5000")
-                    .UseContentRoot(Directory.GetCurrentDirectory())
-                    .UseStartup<Startup>()
-                    .UseApplicationInsights()
-                    .Build();
+                var sertConnString = Environment.GetEnvironmentVariable("CertConnectionString");
 
-                host.Run();
+                if (string.IsNullOrWhiteSpace(sertConnString) || sertConnString.Length < 10)
+                {
+                    var host = new WebHostBuilder()
+                        .UseKestrel()
+                        .UseUrls("http://*:5000")
+                        .UseContentRoot(Directory.GetCurrentDirectory())
+                        .UseStartup<Startup>()
+                        .UseApplicationInsights()
+                        .Build();
+
+                    host.Run();
+                }
+                else
+                {
+                    var sertContainer = Environment.GetEnvironmentVariable("CertContainer");
+                    var sertFilename = Environment.GetEnvironmentVariable("CertFileName");
+                    var sertPassword = Environment.GetEnvironmentVariable("CertPassword");
+
+                    var certBlob = AzureBlobStorage.Create(new LocalSettingsReloadingManager<string>(sertConnString));
+                    var cert = certBlob.GetAsync(sertContainer, sertFilename).Result.ToBytes();
+
+                    X509Certificate2 xcert = new X509Certificate2(cert, sertPassword);
+
+                    var host = new WebHostBuilder()
+                        .UseKestrel(x =>
+                        {
+                            x.Listen(IPAddress.Any, 443, listenOptions => listenOptions.UseHttps(xcert));
+                            x.AddServerHeader = false;
+                        })
+                        .UseContentRoot(Directory.GetCurrentDirectory())
+                        .UseUrls("https://*:443/")
+                        .UseStartup<Startup>()
+                        .Build();
+
+                    host.Run();
+                }
             }
             catch (Exception ex)
             {
