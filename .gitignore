@@ -225,3 +225,4 @@ ModelManifest.xml
 **/docker-compose.dev.yml
 **/launchSettings.json
 **/js/app/**/*.js
+**/wwwroot/dist/**/*

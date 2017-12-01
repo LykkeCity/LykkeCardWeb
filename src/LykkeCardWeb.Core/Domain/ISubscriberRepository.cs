@@ -11,10 +11,7 @@ namespace LykkeCardWeb.Core.Domain
 
     public interface ISubscriberRepository
     {
-        Task<IEnumerable<ISubscriber>> GetAllAsync();
-        Task<ISubscriber> GetAsync(string email);
-
         Task<ISubscriber> CreateAsync(ISubscriber subscriber);
-        Task DeleteAsync(string email);
+        Task<ISubscriber> GetAsync(string email);
     }
 }

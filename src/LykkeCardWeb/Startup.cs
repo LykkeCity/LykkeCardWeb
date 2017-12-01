@@ -71,7 +71,12 @@ namespace LykkeCardWeb
                         options.Scope.Add("profile");
                     });
 
-                services.AddMvc();
+                services.AddMvc()
+                    .AddJsonOptions(options =>
+                {
+                    options.SerializerSettings.ContractResolver =
+                        new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver();
+                }); ;
 
                 var builder = new ContainerBuilder();
 

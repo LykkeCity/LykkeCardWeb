@@ -1,6 +1,10 @@
 ﻿using Autofac;
+using AzureStorage.Tables;
 using Common.Log;
+using Lykke.Service.Visa.Client;
 using Lykke.SettingsReader;
+using LykkeCardWeb.AzureRepositories;
+using LykkeCardWeb.Core.Domain;
 using LykkeCardWeb.Core.Settings;
 
 namespace LykkeCardWeb.Mudules
@@ -22,6 +26,11 @@ namespace LykkeCardWeb.Mudules
                 .As<ILog>()
                 .SingleInstance();
 
+            builder.RegisterVisaCardClient(_settings.CurrentValue.VisaServiceClient.ServiceUrl, _log);
+
+            builder.RegisterInstance<ISubscriberRepository>(
+                new SubscriberRepository(AzureTableStorage<Subscriber>.Create(_settings.ConnectionString(x => x.LykkeVisaCardWeb.Db.LykkeConnString), "LykkeSubscribers", _log))
+            ).SingleInstance();
         }
     }
 }

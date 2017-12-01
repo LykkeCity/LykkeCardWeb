@@ -1,3 +1,34 @@
 ﻿.header_nav__item a {
     display: inline-block;
 }
+
+.label_error, .label_success {
+    font-family: ProximaNova;
+    margin-top: 5px;
+    font-size: 13px;
+}
+
+.label_error {
+    color: #ff3e2e;
+}
+
+.label_success {
+    color: #13b72a;
+}
+
+
+/* will be changed */
+.card-type-block {
+    border: 2px solid #eaeaea;
+    padding: 20px;
+    border-radius: 5px;
+    cursor: pointer;
+}
+
+    .card-type-block.selected {
+        border: 2px solid #0388ef
+    }
+
+.ng-hidden {
+    display: none !important;
+}

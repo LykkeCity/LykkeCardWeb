@@ -1,5 +1,5 @@
 ﻿<!DOCTYPE html>
-<html>
+<html data-ng-app="cardApp">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width,initial-scale=1,minimum-scale=1,minimal-ui,user-scalable=no">
@@ -10,28 +10,39 @@
     <link rel="icon" type="image/png" href="favicon-32x32.png" sizes="32x32">
     <link rel="icon" type="image/png" href="favicon-16x16.png" sizes="16x16">
 
-    @RenderSection("Head", required: false) 
+    @RenderSection("Head", required: false)
 
     <environment include="Development">
         <link href="~/css/styles.css" rel="stylesheet" />
         <link href="~/css/styles-custom.css" rel="stylesheet" />
     </environment>
     <environment include="Staging,Production">
-        <link href="~/dist/styles.min.css" rel="stylesheet" />
+        <link href="~/dist/site.min.css" rel="stylesheet" />
     </environment>
 </head>
 <body>
     @Html.Partial("_Menu")
     @RenderBody()
-    @Html.Partial("_Footer")
 
     <environment include="Development">
-        <script src="~/js/site.js"></script>
+        <script src="~/vendor/jquery.min.js"></script>
+        <script src="~/vendor/bootstrap.min.js"></script>
+        <script src="~/vendor/angular.min.js"></script>
+        <script src="~/vendor/qrcode.js"></script>
+        <script src="~/vendor/angular-qrcode.js"></script>
+        <script src="~/js/app/services/contracts/visaCard.js"></script>
+        <script src="~/js/app/services/contracts/cardRequest.js"></script>
+        <script src="~/js/app/services/contracts/visaSettings.js"></script>
+        <script src="~/js/app/services/cardService.js"></script>
+        <script src="~/js/app/services/subscribeService.js"></script>
+        <script src="~/js/app/controllers/cardController.js"></script>
+        <script src="~/js/app/controllers/subscribeController.js"></script>
+        <script src="~/js/app/cardModule.js"></script>
     </environment>
     <environment include="Staging,Production">
         <script src="~/dist/site.min.js"></script>
     </environment>
 
-    @RenderSection("Scripts", required: false) 
+    @RenderSection("Scripts", required: false)
 </body>
 </html>

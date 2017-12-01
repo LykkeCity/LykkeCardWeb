@@ -1,4 +1,4 @@
-﻿<footer class="footer">
+﻿<footer class="footer" data-ng-controller="SubscribeController as sc">
     <div class="footer__top">
         <div class="container">
             <div class="separator"></div>
@@ -15,14 +15,14 @@
                     <div class="block_subscribe">
                         <h5 class="block_subscribe__title">Newsletter</h5>
                         <p class="hint">Get our latest news right in your mailbox</p>
-                        <form class="form" id="subscribe-form">
+                        <form name="sc.subscribeForm" class="form">
                             <div class="form-group">
                                 <div class="input-group">
                                     <i class="icon icon--email"></i>
-                                    <input type="email" placeholder="E-mail address" id="subscribe-email" class="form-control" pattern="[a-z0-9._%+-]+@@[a-z0-9.-]+\.[a-z]{2,3}$">
+                                    <input type="email" placeholder="E-mail address" class="form-control" pattern="[a-z0-9._%+-]+@@[a-z0-9._%+-]+\.[a-z0-9._%+-]+$" data-ng-model="sc.data.email">
                                 </div>
-                                <div id="subscribe-message" style="display:none"></div>
-                                <button class="btn btn-sm btn--primary btn--circle" type="button" id="subscribe-button"><i class="icon icon--arrow-right-alt"></i></button>
+                                <div data-ng-class="{'label_error': sc.data.hasError, 'label_success': !sc.data.hasError}" data-ng-bind="sc.data.message"></div>
+                                <button class="btn btn-sm btn--primary btn--circle" type="button" data-ng-disabled="!sc.subscribeForm.$valid || !sc.data.email" data-ng-click="sc.subscribe()"><i class="icon icon--arrow-right-alt"></i></button>
                             </div>
                         </form>
                     </div>
@@ -100,77 +100,76 @@
         </div>
     </div>
 </footer>
+@*<script>
+        $(function () {
+            $('#subscribe-button').click(function (event) {
+                event.preventDefault();
 
-<script>
-    $(function () {
-        $('#subscribe-button').click(function (event) {
-            event.preventDefault();
+                if ($('#subscribe-email').val() === '') {
+                    $('#subscribe-message').text('E-mail is required and can’t be empty');
+                    $('#subscribe-message').css('color', '#ff3e2e');
+                    $('#subscribe-message').css('text-align', 'left');
+                    $('#subscribe-message').css('font-family', 'ProximaNova');
+                    $('#subscribe-message').css('margin-top', '5px');
+                    $('#subscribe-message').css('font-size', '13px');
 
-            if ($('#subscribe-email').val() === '') {
-                $('#subscribe-message').text('E-mail is required and can’t be empty');
-                $('#subscribe-message').css('color', '#ff3e2e');
-                $('#subscribe-message').css('text-align', 'left');
-                $('#subscribe-message').css('font-family', 'ProximaNova');
-                $('#subscribe-message').css('margin-top', '5px');
-                $('#subscribe-message').css('font-size', '13px');
+                    $('#subscribe-message').show();
+                    return false
+                }
 
-                $('#subscribe-message').show();
-                return false
-            }
+                $('#subscribe-button').prop('disabled', true);
+                var form = document.forms['subscribe-form'];
 
-            $('#subscribe-button').prop('disabled', true);
-            var form = document.forms['subscribe-form'];
+                if (form.checkValidity()) {
+                    var model = {};
+                    model.Email = $('#subscribe-email').val();
 
-            if (form.checkValidity()) {
-                var model = {};
-                model.Email = $('#subscribe-email').val();
+                    $.ajax({
+                        url: '/Subscriber/Subscribe',
+                        data: model,
+                        type: 'POST',
+                        success: function (data) {
+                            console.log(data);
 
-                $.ajax({
-                    url: '/Subscriber/Subscribe',
-                    data: model,
-                    type: 'POST',
-                    success: function (data) {
-                        console.log(data);
+                            if (data.error === 'false') {
+                                $('#subscribe-email').val('');
+                                $('#subscribe-message').text('Great! Сheck your inbox for confirmation');
+                                $('#subscribe-message').css('color', '#13b72a');
+                                $('#subscribe-message').css('text-align', 'left');
+                                $('#subscribe-message').css('font-family', 'ProximaNova');
+                                $('#subscribe-message').css('margin-top', '5px');
+                                $('#subscribe-message').css('font-size', '13px');
 
-                        if (data.error === 'false') {
-                            $('#subscribe-email').val('');
-                            $('#subscribe-message').text('Great! Сheck your inbox for confirmation');
-                            $('#subscribe-message').css('color', '#13b72a');
-                            $('#subscribe-message').css('text-align', 'left');
-                            $('#subscribe-message').css('font-family', 'ProximaNova');
-                            $('#subscribe-message').css('margin-top', '5px');
-                            $('#subscribe-message').css('font-size', '13px');
+                                $('#subscribe-message').show();
+                            }
+                            else {
+                                $('#subscribe-message').text('You are already subscribed');
+                                $('#subscribe-message').css('color', '#ff3e2e');
+                                $('#subscribe-message').css('text-align', 'left');
+                                $('#subscribe-message').css('font-family', 'ProximaNova');
+                                $('#subscribe-message').css('margin-top', '5px');
+                                $('#subscribe-message').css('font-size', '13px');
 
-                            $('#subscribe-message').show();
+                                $('#subscribe-message').show();
+                            }
+
+                            $('#subscribe-button').prop('disabled', false);
                         }
-                        else {
-                            $('#subscribe-message').text('You are already subscribed');
-                            $('#subscribe-message').css('color', '#ff3e2e');
-                            $('#subscribe-message').css('text-align', 'left');
-                            $('#subscribe-message').css('font-family', 'ProximaNova');
-                            $('#subscribe-message').css('margin-top', '5px');
-                            $('#subscribe-message').css('font-size', '13px');
+                    });
+                }
+                else {
+                    $('#subscribe-message').text('Please enter a valid email address');
+                    $('#subscribe-message').css('color', '#ff3e2e');
+                    $('#subscribe-message').css('text-align', 'left');
+                    $('#subscribe-message').css('font-family', 'ProximaNova');
+                    $('#subscribe-message').css('margin-top', '5px');
+                    $('#subscribe-message').css('font-size', '13px');
 
-                            $('#subscribe-message').show();
-                        }
+                    $('#subscribe-message').show();
+                    $('#subscribe-button').prop('disabled', false);
+                }
 
-                        $('#subscribe-button').prop('disabled', false);
-                    }
-                });
-            }
-            else {
-                $('#subscribe-message').text('Please enter a valid email address');
-                $('#subscribe-message').css('color', '#ff3e2e');
-                $('#subscribe-message').css('text-align', 'left');
-                $('#subscribe-message').css('font-family', 'ProximaNova');
-                $('#subscribe-message').css('margin-top', '5px');
-                $('#subscribe-message').css('font-size', '13px');
-
-                $('#subscribe-message').show();
-                $('#subscribe-button').prop('disabled', false);
-            }
-
-            return false;
+                return false;
+            });
         });
-    });
-</script>
+    </script>*@

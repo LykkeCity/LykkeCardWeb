@@ -1,8 +1,8 @@
 ﻿module CardModule {
     export interface ICardService {
-        getPersonalData(successCallback: Function);
-        savePersonalData(profile: any, successCallback: Function);
-        deleteAvatar(successCallback: Function);
+        getCards(successCallback: Function);
+        getSettings(successCallback: Function);
+        createCard(cardRequest: CardRequest, callback: Function);
     }
 
     export class CardService implements ICardService {
@@ -12,28 +12,33 @@
             this.http = $http;
         }
 
-        getPersonalData(successCallback: Function) {
-            this.http.post('/profile/getpersonaldata', null).then((data) => {
+        getCards(successCallback: Function) {
+            this.http.get('/api/cards/all').then((data) => {
                 successCallback(data.data);
             }, (error) => {
                 successCallback(error);
             });
         }
 
-        savePersonalData(profile: any, successCallback: Function) {
-            return this.http.post('/profile/savepersonaldata', profile).then((data) => {
+        getSettings(successCallback: Function) {
+            return this.http.get('/api/cards/settings').then((data) => {
                 successCallback(data.data);
             }, (error) => {
                 successCallback(error);
             });
         }
 
-        deleteAvatar(successCallback: Function) {
-            return this.http.post('/profile/deleteavatar', null).then((data) => {
-                successCallback(data.data);
-            }, (error) => {
-                successCallback(error);
+        createCard(cardRequest: CardRequest, callback: Function) {
+            return this.http.post('/api/cards/createRequest', cardRequest).then((data) => {
+                callback(data.data);
+            }, (data) => {
+                callback(data.data);
             });
         }
+    }
+
+    export enum ServiceErrors {
+        NeedKyc = 1,
+        TechicalProblem = 13
     }
 }

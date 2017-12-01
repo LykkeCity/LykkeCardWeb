@@ -9,9 +9,15 @@
   {
     "outputFileName": "wwwroot/dist/site.min.js",
     "inputFiles": [
-      "wwwroot/js/vendor/angular.js",
-      "wwwroot/js/app/cardModule.js",
-      "wwwroot/js/app/controllers/cardController.js"
+      "wwwroot/vendor/jquery.min.js",
+      "wwwroot/vendor/bootstrap.min.js",
+      "wwwroot/vendor/angular.js",
+      "wwwroot/vendor/qrcode.js",
+      "wwwroot/vendor/angular-qrcode.js",
+      "wwwroot/js/app/services/contracts/*.js",
+      "wwwroot/js/app/services/*.js",
+      "wwwroot/js/app/controllers/*.js",
+      "wwwroot/js/app/*.js"
     ],
     // Optionally specify minification options
     "minify": {

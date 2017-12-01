@@ -2,12 +2,14 @@
 /// <reference path="../typings/globals/jquery/index.d.ts" />
 
 module CardModule {
-    angular.module('cardApp', []).run($http => {
+    angular.module('cardApp', ['monospaced.qrcode']).run($http => {
         $http.defaults.headers.common['RequestVerificationToken'] = angular.element('input[name="__RequestVerificationToken"]').attr('value');
 
-        //$('#profile-page').show();
+        $('.ng-hidden').removeClass('ng-hidden');
     });
 
     angular.module('cardApp').service('ICardService', CardService);
+    angular.module('cardApp').service('ISubscribeService', SubscribeService);
     angular.module('cardApp').controller('CardController', CardController);
+    angular.module('cardApp').controller('SubscribeController', SubscribeController);
 }
