@@ -72,7 +72,26 @@ namespace LykkeCardWeb.Controllers
             {
                 return BadRequest(new ApiResponse<CardCreateResponse>{Error = new ErrorResponse(ValidationError.TechnicalProblem, "Technical problem")});
             }
-            
+        }
+
+        [HttpGet]
+        [Route("viewPinToken/{cardId}")]
+        public async Task<IActionResult> ViewPin(string cardId)
+        {
+            try
+            {
+                var clientId = User.GetClientId();
+                var result = await _visaCardClient.GetViewPinTokenAsync(clientId, cardId);
+
+                if (result.Error != null)
+                    return BadRequest(result);
+
+                return Ok(result);
+            }
+            catch
+            {
+                return BadRequest(new ApiResponse<SettingsResponse> { Error = new ErrorResponse(ValidationError.TechnicalProblem, "Technical problem") });
+            }
         }
     }
 }

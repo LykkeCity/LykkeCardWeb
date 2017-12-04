@@ -2,10 +2,13 @@
 /// <reference path="../../typings/globals/jquery/index.d.ts" />
 
 module CardModule {
+    import IPromise = angular.IPromise;
+
     export class CardController {
-        static $inject = ['ICardService'];
+        static $inject = ['ICardService', '$scope', '$interval'];
 
         cardService: ICardService;
+        interval: ng.IIntervalService;
         cards: VisaCard[];
         settings: VisaSettings;
         newCard: CardRequest;
@@ -16,17 +19,13 @@ module CardModule {
         action: string;
         createCardError: string;
         processing: boolean;
+        slickConfig: any;
+        card: VisaCard;
+        viewPinForm: ViewPinForm;
+        scope: ng.IScope;
 
-        constructor(cardService: ICardService) {
-            this.cardService = cardService;
-            this.newCard = new CardRequest();
-            this.fees = new NewCardFees();
-            this.settings = new VisaSettings();
-            this.newCardForm = {};
-            this.qrcode = '';
-            this.error = '';
-            this.createCardError = '';
-            this.processing = false;
+        constructor(cardService: ICardService, scope: ng.IScope, interval: ng.IIntervalService) {
+            this.init(cardService, scope, interval);
 
             this.cardService.getCards((cards) => {
                 this.cards = cards;
@@ -46,6 +45,32 @@ module CardModule {
                     this.updateFee();
                 }
             });
+        }
+
+        private init(cardService: ICardService, scope: ng.IScope, interval: ng.IIntervalService) {
+            this.cardService = cardService;
+            this.interval = interval;
+            this.scope = scope;
+            this.newCard = new CardRequest();
+            this.fees = new NewCardFees();
+            this.settings = new VisaSettings();
+            this.newCardForm = {};
+            this.qrcode = '';
+            this.error = '';
+            this.createCardError = '';
+            this.processing = false;
+            this.slickConfig = {
+                dots: false,
+                infinite: false,
+                speed: 300,
+                variableWidth: true,
+                slidesToShow: 1,
+                slidesToScroll: 1,
+                responsive: []
+            };
+            this.card = null;
+            this.viewPinForm = new ViewPinForm();
+            this.viewPinForm.seconds = 0;
         }
 
         addCard() {
@@ -86,7 +111,7 @@ module CardModule {
         }
 
         isProceedDisabled() {
-            return !(this.newCard.cardType === CardType.Virtual || this.newCardForm.$valid) || this.processing;
+            return !(this.newCard.cardType === CardType.Virtual && this.newCard.nameOnCard || this.newCardForm.$valid) || this.processing;
         }
 
         proceed() {
@@ -106,6 +131,61 @@ module CardModule {
         generateQrCode(id: string):string {
             return btoa(JSON.stringify({Id: id}));
         }
+
+        showPinModal(card: VisaCard) {
+            this.backToMainScreen();
+            this.card = card;
+            $('#modal_showPin').modal();
+        }
+
+        viewPin() {
+            $('#pin-loading').removeClass('hidden');
+            $('#wc_cors_button').attr('disabled', 'disabled');
+
+            this.cardService.getViewPinToken(this.card.id,
+                (result) => {
+                    if (result.error) {
+                        this.createCardError = result.error.errorMessage;
+                    } else {
+                        console.log(result.result);
+                        wc_cors.getCardData(result.result);
+
+                        $('#wc_cors_wrap').on('DOMNodeInserted', () => {
+                            $('#pin-loading').addClass('hidden');
+                            $('#pin-note').removeClass('hidden');
+
+                            this.scope.$apply(() => {
+                                this.viewPinForm.seconds = 30;
+                            });
+
+                            if (angular.isDefined(this.viewPinForm.interval))
+                                this.interval.cancel(this.viewPinForm.interval);
+
+                            this.viewPinForm.interval = this.interval(() => {
+                                this.scope.$apply(() => { this.viewPinForm.seconds--; });
+                                if (this.viewPinForm.seconds <= 0) {
+                                    this.closeViewPin();
+                                    $('#pin-note').addClass('hidden');
+                                }
+                            }, 1000, null, null, this.viewPinForm);
+
+                        });
+
+                        $('#wc_cors_wrap').on('DOMNodeRemoved', () => {
+                            if (angular.isDefined(this.viewPinForm.interval))
+                                this.interval.cancel(this.viewPinForm.interval);
+                            $('#pin-note').addClass('hidden');
+                        });
+                    }
+                });
+        }
+
+        closeViewPin() {
+            if (angular.isDefined(this.viewPinForm.interval)) {
+                this.interval.cancel(this.viewPinForm.interval);
+                wc_cors.reload();
+            }
+        }
     }
 
     export class NewCardFees {
@@ -114,5 +194,10 @@ module CardModule {
         standard: number;
         express: number;
         total: number;
+    }
+
+    export class ViewPinForm {
+        interval: IPromise<any>;
+        seconds: number;
     }
 }

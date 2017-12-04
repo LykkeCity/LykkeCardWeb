@@ -3,6 +3,7 @@
         getCards(successCallback: Function);
         getSettings(successCallback: Function);
         createCard(cardRequest: CardRequest, callback: Function);
+        getViewPinToken(cardId: string, callback: Function);
     }
 
     export class CardService implements ICardService {
@@ -32,6 +33,14 @@
 
         createCard(cardRequest: CardRequest, callback: Function) {
             return this.http.post('/api/cards/createRequest', cardRequest).then((data) => {
+                callback(data.data);
+            }, (data) => {
+                callback(data.data);
+            });
+        }
+
+        getViewPinToken(cardId: string, callback: Function) {
+            return this.http.get('/api/cards/viewPinToken/'+cardId).then((data) => {
                 callback(data.data);
             }, (data) => {
                 callback(data.data);

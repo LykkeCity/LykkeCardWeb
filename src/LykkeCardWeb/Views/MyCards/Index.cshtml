@@ -1,165 +1,339 @@
 ﻿<div data-ng-controller="CardController as vm">
-    <section class="section section_lead" id="lead">
-        <div class="container">
-            <div class="vertical_align">
-                <div class="vertical_align__row">
-                    <div class="vertical_align__cell">
-                        <h1 class="section_title">My Lykke cards</h1>
-                        <div class="section_img"><img src="/images/card_hero_visa.jpg" class="floating" width="1300" alt="card"></div>
-                        <div class="ng-hidden section_subtitle" data-ng-show="vm.cards.length === 0">No cards yet</div>
-                        <div data-ng-repeat="card in vm.cards" class="ng-hidden">Name on card: {{card.nameOnCard}}</div>
-                        <form class="form form_request">
-                            <div class="form_group">
-                                <a href="#add" class="btn btn-block btn--primary" data-ng-click="vm.addCard()">Add card</a>
+<section class="section section_lead" id="lead">
+    <div class="container">
+        <div class="col-md-6 automargin">
+            <h2>My LykkeCards</h2>
+            
+            <slick class="card_list slick-slider" settings="vm.slickConfig" data-ng-if="vm.cards">
+                <div class="card_item ng-hidden" data-ng-repeat="card in vm.cards">
+                    <div class="card_preview">
+                        <div class="card_preview__front">
+                            <img src="images/card.png" alt="card" width="500" class="card_preview__image">
+                            <div class="card_preview__label"><span class="label" data-ng-bind="card.status"></span></div>
+                            <div class="card_preview__info">
+                                <div class="card_preview__number">
+                                    <span class="card_mask">
+                                        <span class="card_mask__group">&middot;&middot;&middot;&middot;</span>
+                                        <span class="card_mask__group">&middot;&middot;&middot;&middot;</span>
+                                        <span class="card_mask__group">&middot;&middot;&middot;&middot;</span>
+                                        <span class="card_mask__group" data-ng-class="{'card_mask__group--fill': card.pan}" data-ng-bind="card.pan ? card.pan : '&middot;&middot;&middot;&middot;'"></span>
+                                    </span>
+                                </div>
+                                <div class="card_preview__date" data-ng-bind="card.expiryDate"></div>
+                                <div class="card_preview__name" data-ng-bind="card.nameOnCard"></div>
+                            </div>
+                        </div>
+                        <div class="card_preview__back"></div>
+                    </div>
+                    <div class="card_actions">
+                        <div class="card_actions__item card_actions__item--active">
+                            <a href="">
+                                <i class="icon icon--activate"></i>
+                                <span>Activate</span>
+                            </a>
+                        </div>
+                        <div class="card_actions__item" data-ng-click="vm.showPinModal(card)">
+                            <a href="">
+                                <i class="icon icon--show_pin"></i>
+                                <span>Show PIN</span>
+                            </a>
+                        </div>
+                        <div class="card_actions__item">
+                            <a href="">
+                                <i class="icon icon--block"></i>
+                                <span>Block card</span>
+                            </a>
+                        </div>
+                    </div>
+                </div>
+
+
+
+                @*<div class="card_item">
+                            <div class="card_preview">
+                                <div class="card_preview__front">
+                                    <img src="images/card.png" alt="card" width="500" class="card_preview__image">
+                                    <div class="card_preview__label">
+                                        <span class="label">not activated</span>
+                                    </div>
+                                    <div class="card_preview__info">
+                                        <div class="card_preview__number">
+                                            <span class="card_mask">
+                                                <span class="card_mask__group">&middot;&middot;&middot;&middot;</span>
+                                                <span class="card_mask__group">&middot;&middot;&middot;&middot;</span>
+                                                <span class="card_mask__group">&middot;&middot;&middot;&middot;</span>
+                                                <span class="card_mask__group card_mask__group--fill">6548</span>
+                                            </span>
+                                        </div>
+                                        <div class="card_preview__date">12/19</div>
+                                        <div class="card_preview__name">Cardholder Name</div>
+                                    </div>
+                                </div>
+                                <div class="card_preview__back"></div>
+                            </div>
+                            <div class="card_actions">
+                                <div class="card_actions__item card_actions__item--active">
+                                    <a href="">
+                                        <i class="icon icon--activate"></i>
+                                        <span>Activate</span>
+                                    </a>
+                                </div>
+                                <div class="card_actions__item">
+                                    <a href="">
+                                        <i class="icon icon--show_pin"></i>
+                                        <span>Show PIN</span>
+                                    </a>
+                                </div>
+                                <div class="card_actions__item">
+                                    <a href="">
+                                        <i class="icon icon--unblock"></i>
+                                        <span>Unlock card</span>
+                                    </a>
+                                </div>
+                            </div>
+                        </div>*@
+            </slick>
+
+            <div class="text-center">
+                <a href="#add" class="btn btn--primary" data-ng-click="vm.addCard()">Add card</a>
+            </div>
+        </div>
+    </div>
+</section>
+<section class="section section--card_form ng-hidden" id="add" data-ng-if="vm.action">
+    <div class="container">
+        <div class="row" data-ng-if="vm.action === 'add'">
+            <div class="col-md-11 col-md-offset-1">
+                <div class="section_title">New LykkeCard</div>
+                <h3>Card info</h3>
+
+                <div class="row">
+                    <div class="col-md-7">
+                        <form class="form form--simple" name="vm.newCardForm" novalidate>
+                            <div class="radio-group">
+                                <div class="radio radio--plate">
+                                    <input type="radio" id="r1" data-ng-model="vm.newCard.cardType" value="Plastic" data-ng-click="vm.updateFee()">
+                                    <label for="r1" class="control-label">
+                                        <i class="icon icon--plastic_card"></i>
+                                        <span class="radio__title">Plastic</span>
+                                        <span class="hint" data-ng-bind="vm.fees.plasticCreation + ' ' + vm.newCard.currency"></span>
+                                    </label>
+                                </div>
+                                <div class="radio radio--plate">
+                                    <input type="radio" id="r2" data-ng-model="vm.newCard.cardType" value="Virtual" data-ng-click="vm.updateFee()">
+                                    <label for="r2" class="control-label">
+                                        <i class="icon icon--virtual_card"></i>
+                                        <span class="radio__title">Virtual</span>
+                                        <span class="hint" data-ng-bind="vm.fees.virtualCreation + ' ' + vm.newCard.currency"></span>
+                                    </label>
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <label class="control-label">Type of payment system</label>
+                                </div>
+                                <div class="col-md-8">
+                                    <div class="form-group">
+                                        <div class="radio btn-block" data-ng-repeat="currency in vm.settings.availableCurrencies">
+                                            <input type="radio" id="radio{{$index}}" class="radio__control" data-ng-model="vm.newCard.currency" data-ng-value="currency" data-ng-click="vm.updateFee()">
+                                            <label for="radio{{$index}}" class="form-control control-label radio__label" data-ng-bind="currency"></label>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="card_name" class="control-label">Name on the card</label>
+                                <input type="text" class="form-control" id="card_name" data-ng-model="vm.newCard.nameOnCard" maxlength="22" required>
+                            </div>
+
+                            <div data-ng-show="vm.newCard.cardType == 'Plastic'">
+                                <h3>Delivery info</h3>
+
+                                <div class="row">
+                                    <div class="col-md-4">
+                                        <label for="card_name" class="control-label">Delivery option</label>
+                                    </div>
+                                    <div class="col-md-8">
+                                        <div class="form-group">
+                                            <div class="radio btn-block">
+                                                <input type="radio" id="delivery1" class="radio__control" data-ng-model="vm.newCard.deliveryType" value="StandardTrackableDelivery" data-ng-click="vm.updateFee()">
+                                                <label for="delivery1" class="form-control control-label radio__label">
+                                                    <span class="hint pull-right">7-13 days ({{vm.newCard.currency}} {{vm.fees.standard}})</span>
+                                                    <span class="radio__title">Standard</span>
+                                                </label>
+                                            </div>
+                                            <div class="radio btn-block">
+                                                <input type="radio" id="delivery2" class="radio__control" data-ng-model="vm.newCard.deliveryType" value="ExpressDelivery" data-ng-click="vm.updateFee()">
+                                                <label for="delivery2" class="form-control control-label radio__label">
+                                                    <span class="hint pull-right">3-5 days ({{vm.newCard.currency}} {{vm.fees.express}})</span>
+                                                    <span class="radio__title">Express</span>
+                                                </label>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <a href="@Url.Action("Countries", "Home")" class="hint pull-right" target="_blank">View list of eligible countries</a>
+                                    <label for="countries" class="control-label">
+                                        Country
+                                    </label>
+                                    <div class="select">
+                                        <select id="countries" class="form-control form-control--select"
+                                                data-ng-options="country.iso2 as country.name for country in vm.settings.availableCountries track by country.iso2"
+                                                data-ng-model="vm.newCard.deliveryAddress.country" required></select>
+                                        <i class="icon icon--arrow-down"></i>
+                                    </div>
+                                </div>
+
+                                <div class="row">
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="city" class="control-label">City</label>
+                                            <input type="text" class="form-control" id="city" data-ng-model="vm.newCard.deliveryAddress.city" required>
+                                        </div>
+                                    </div>
+                                    <div class="col-md-6">
+                                        <div class="form-group">
+                                            <label for="zip" class="control-label">ZIP</label>
+                                            <input type="text" class="form-control" id="zip" data-ng-model="vm.newCard.deliveryAddress.zipCode" required>
+                                        </div>
+                                    </div>
+                                </div>
+
+                                <div class="form-group">
+                                    <label for="address" class="control-label">Address line</label>
+                                    <input type="text" class="form-control" id="address" data-ng-model="vm.newCard.deliveryAddress.address" required>
+                                </div>
+
+                            </div>
+
+                            <div class="submit-group">
+                                <button type="button" class="btn btn-block btn--primary btn-sm" data-ng-disabled="vm.isProceedDisabled()" data-ng-click="vm.proceed()">Proceed</button>
                             </div>
                         </form>
                     </div>
-                </div>
-            </div>
-        </div>
-    </section>
-    <section class="section section_about ng-hidden" id="add" data-ng-if="vm.action">
-        <div class="container">
-            <div class="row" data-ng-if="vm.action === 'add'">
-                <h2 class="section_title">New LykkeCard</h2>
-                <div class="col-md-8">
-                    <h3 class="section_subtitle">Card info</h3>
-                    <form name="vm.newCardForm" novalidate>
-                        <div class="row">
-                            <div class="col-md-6 card-type-block" data-ng-class="{'selected' : vm.newCard.cardType == 'Plastic'}" data-ng-click="vm.newCard.cardType = 'Plastic';vm.updateFee();">
-                                Plastic<br />
-                                <span data-ng-bind="vm.fees.plasticCreation + ' ' + vm.newCard.currency"></span>
+
+                    <div class="col-xs-12 col-md-5">
+                        <div class="total">
+                            <div class="total__header">
+                                <div class="total__price" data-ng-bind="vm.fees.total + ' ' + vm.newCard.currency"></div>
+                                <div class="total__title">Total price</div>
+                                <div class="total__hint">Payment only via a Lykke Wallet app</div>
                             </div>
-                            <div class="col-md-6 card-type-block" data-ng-class="{'selected' : vm.newCard.cardType == 'Virtual'}" data-ng-click="vm.newCard.cardType = 'Virtual';vm.updateFee();">
-                                Virtual<br />
-                                <span data-ng-bind="vm.fees.virtualCreation + ' ' + vm.newCard.currency"></span>
-                            </div>
-                        </div>
-                        <div class="row">
-                            <div class="col-md-6">Type of payment system</div>
-                            <div class="col-md-6">
-                                <div class="radio" data-ng-repeat="currency in vm.settings.availableCurrencies">
-                                    <label>
-                                        <input type="radio" data-ng-model="vm.newCard.currency" data-ng-value="currency" data-ng-click="vm.updateFee()"> <span data-ng-bind="currency"></span>
+
+                            <div class="checklist">
+                                @*<div class="checkbox checkbox--checked">
+                                        <label class="control-label">
+                                            <span>You downloaded Lykke Wallet</span>
+                                            <a href="/" class="btn btn--flat">Download</a>
+                                        </label>
+                                    </div>*@
+                                <div class="checkbox">
+                                    <label class="control-label">
+                                        <span>You passed KYC</span>
+                                        <a href="/" class="btn btn--flat">Go to KYC procedure</a>
                                     </label>
                                 </div>
                             </div>
                         </div>
-                        <div data-ng-show="vm.newCard.cardType == 'Plastic'">
-                            <div class="form-group">
-                                <label for="nameOnCard">Name on card</label>
-                                <input type="text" class="form-control" id="nameOnCard" data-ng-model="vm.newCard.nameOnCard" maxlength="22" required>
-                            </div>
-
-                            <h3 class="section_subtitle">Delivery info</h3>
-                            <div class="row">
-                                <div class="col-md-6">Delivery option</div>
-                                <div class="col-md-6">
-                                    <div class="radio">
-                                        <label>
-                                            <input type="radio" data-ng-model="vm.newCard.deliveryType" value="StandardTrackableDelivery" data-ng-click="vm.updateFee()"> Standard (7-13 days) {{vm.fees.standard}} {{vm.newCard.currency}}
-                                        </label>
-                                    </div>
-                                    <div class="radio">
-                                        <label>
-                                            <input type="radio" data-ng-model="vm.newCard.deliveryType" value="ExpressDelivery" data-ng-click="vm.updateFee()"> Express (3-5 days) {{vm.fees.express}} {{vm.newCard.currency}}
-                                        </label>
-                                    </div>
-                                </div>
-                            </div>
-
-                            <div class="form-group">
-                                <label for="country">Country</label>
-                                <select id="country" class="form-control"
-                                        data-ng-options="country.iso2 as country.name for country in vm.settings.availableCountries track by country.iso2"
-                                        data-ng-model="vm.newCard.deliveryAddress.country" required></select>
-                            </div>
-                            <div class="row">
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="city">City</label>
-                                        <input type="text" class="form-control" id="city" data-ng-model="vm.newCard.deliveryAddress.city" required>
-                                    </div>
-                                </div>
-                                <div class="col-md-6">
-                                    <div class="form-group">
-                                        <label for="zip">Zip</label>
-                                        <input type="text" class="form-control" id="zip" data-ng-model="vm.newCard.deliveryAddress.zipCode" required>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="form-group">
-                                <label for="address">Address line</label>
-                                <input type="text" class="form-control" id="address" data-ng-model="vm.newCard.deliveryAddress.address" required>
-                            </div>
-                        </div>
-
-                        <button type="button" class="btn btn-block btn--primary" data-ng-disabled="vm.isProceedDisabled()" data-ng-click="vm.proceed()">Proceed</button>
-                        @*<button type="button" class="btn btn-block btn--primary" data-toggle="modal" data-target="#modal_qrcode" data-ng-click="vm.qrcode = vm.generateQrCode('93bb09cf-92c8-41ca-a5e4-2f9ca8357d66')">Test qrcode</button>*@
-                    </form>
+                    </div>
                 </div>
-                <div class="col-md-4">
-                    <h3 class="section_subtitle">Total price {{vm.fees.total}} {{vm.newCard.currency}}</h3>
-                </div>
-            </div>
-            <div class="row" data-ng-if="vm.action === 'error'">
-                <h2>Error</h2>
-                <div data-ng-bind="vm.error"></div>
-                <a href="#" class="btn btn-block btn--primary" data-ng-click="vm.backToMainScreen()">Close</a>
             </div>
         </div>
-    </section>
-    
-    <div class="modal modal--message fade" id="modal_qrcode" tabindex="-1" role="dialog" data-backdrop="static">
-        <div class="modal_valign">
-            <div class="modal_valign__row">
-                <div class="modal_valign__cell">
+        <div class="row" data-ng-if="vm.action === 'error'">
+            <h2>Error</h2>
+            <div data-ng-bind="vm.error"></div>
+            <a href="#" class="btn btn-block btn--primary" data-ng-click="vm.backToMainScreen()">Close</a>
+        </div>
+    </div>
+</section>
 
-                    <div class="modal__dialog" role="document">
-                        <div class="modal__content">
-                            <button type="button" class="close visible-xs" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+<div class="modal modal--message fade" id="modal_qrcode" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal_valign">
+        <div class="modal_valign__row">
+            <div class="modal_valign__cell">
 
-                            <div class="modal__body">
-                                <h3>Payment confirmation</h3>
-                                <div class="text">
-                                    Instruction here<br />
-                                    <qrcode size="250" data="{{vm.qrcode}}"></qrcode>
-                                </div>
+                <div class="modal__dialog" role="document">
+                    <div class="modal__content">
+                        <button type="button" class="close visible-xs" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                        <div class="modal__body">
+                            <h3>Payment confirmation</h3>
+                            <div class="text">
+                                Instruction here<br />
+                                <qrcode size="250" data="{{vm.qrcode}}"></qrcode>
                             </div>
-                            <div class="modal__footer">
-                                <a href="#" class="btn btn--flat" data-dismiss="modal" data-ng-click="vm.finish()">Close</a>
-                            </div>
+                        </div>
+                        <div class="modal__footer">
+                            <a href="#" class="btn btn--flat" data-dismiss="modal" data-ng-click="vm.finish()">Close</a>
                         </div>
                     </div>
                 </div>
             </div>
         </div>
-    </div>
-    
-    <div class="modal modal--message fade" id="modal_error" tabindex="-1" role="dialog">
-        <div class="modal_valign">
-            <div class="modal_valign__row">
-                <div class="modal_valign__cell">
-
-                    <div class="modal__dialog" role="document">
-                        <div class="modal__content">
-                            <button type="button" class="close visible-xs" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
-
-                            <div class="modal__body">
-                                <h3>Error</h3>
-                                <div class="text" data-ng-bind="vm.createCardError"></div>
-                            </div>
-                            <div class="modal__footer">
-                                <button type="button" class="btn btn--flat" data-dismiss="modal">Okay :(</button>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
-    
-    <div data-ng-show="vm.action" class="ng-hidden">
-        @Html.Partial("_Footer")
     </div>
 </div>
+
+<div class="modal modal--message fade" id="modal_error" tabindex="-1" role="dialog">
+    <div class="modal_valign">
+        <div class="modal_valign__row">
+            <div class="modal_valign__cell">
+
+                <div class="modal__dialog" role="document">
+                    <div class="modal__content">
+                        <button type="button" class="close visible-xs" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                        <div class="modal__body">
+                            <h3>Error</h3>
+                            <div class="text" data-ng-bind="vm.createCardError"></div>
+                        </div>
+                        <div class="modal__footer">
+                            <button type="button" class="btn btn--flat" data-dismiss="modal">Okay :(</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal modal--message fade" id="modal_showPin" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal_valign">
+        <div class="modal_valign__row">
+            <div class="modal_valign__cell">
+
+                <div class="modal__dialog" role="document">
+                    <div class="modal__content">
+                        <button type="button" class="close visible-xs" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
+
+                        <div class="modal__body">
+                            <h3 data-ng-bind="vm.card.cardType == 'Plastic' ? 'View pin' : 'View card details'"></h3>
+                            <div id="pin-loading" class="hidden">Loading...</div>
+                            <div id="wc_cors_wrap"></div>
+                            <div id="pin-note" class="hidden">Will be visible within <span id="pin-seconds" data-ng-bind="vm.viewPinForm.seconds"></span> seconds.</div>
+                        </div>
+                        <div class="modal__footer">
+                            <button id="wc_cors_button" type="button" class="btn btn--primary" data-ng-click="vm.viewPin()" data-ng-bind="vm.card.cardType == 'Plastic' ? 'View pin' : 'View details'">Show pin</button>
+                            <button type="button" class="btn btn--flat" data-dismiss="modal" data-ng-click="vm.closeViewPin()">Close</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div data-ng-show="vm.action" class="ng-hidden">
+    @Html.Partial("_Footer")
+</div>
+</div>
+
+@section Scripts{ 
+    <script src="https://api.wavecrest.gi/static/lib/js/wc/wc-cors/1.0/wavecrest-cors.min.js"></script>
+    <script type="text/javascript">
+        wc_cors.init('https://wcapi.wavecrest.in');
+    </script>
+}

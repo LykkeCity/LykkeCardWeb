@@ -12,6 +12,8 @@
       "wwwroot/vendor/jquery.min.js",
       "wwwroot/vendor/bootstrap.min.js",
       "wwwroot/vendor/angular.js",
+      "wwwroot/vendor/slick.min.js",
+      "wwwroot/vendor/angular-slick.min.js",
       "wwwroot/vendor/qrcode.js",
       "wwwroot/vendor/angular-qrcode.js",
       "wwwroot/js/app/services/contracts/*.js",
