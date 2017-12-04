@@ -32,3 +32,7 @@
 .ng-hidden {
     display: none !important;
 }
+
+.all-height {
+    height: 100%;
+}
