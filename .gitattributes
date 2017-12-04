@@ -1,11 +1,3 @@
-# Auto normalize line-endings
-
-* text eol=lf encoding=UTF-8
-
-# Always LF line-endings
-
-*.sh text eol=lf
-
 # Always CRLF line-endings
 
 *.sln text eol=crlf
