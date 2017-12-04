@@ -1,0 +1,1 @@
+﻿declare var wc_cors: any;

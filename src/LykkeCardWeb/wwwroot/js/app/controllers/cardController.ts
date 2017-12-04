@@ -1,5 +1,6 @@
 ﻿/// <reference path="../../typings/globals/angular/index.d.ts" />
 /// <reference path="../../typings/globals/jquery/index.d.ts" />
+/// <reference path="../../typings/globals/wc.d.ts" />
 
 module CardModule {
     import IPromise = angular.IPromise;
