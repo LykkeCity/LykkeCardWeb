@@ -1,4 +1,4 @@
-﻿[
+[
   {
     "outputFileName": "wwwroot/dist/site.min.css",
     "inputFiles": [
@@ -21,12 +21,9 @@
       "wwwroot/js/app/controllers/*.js",
       "wwwroot/js/app/*.js"
     ],
-    // Optionally specify minification options
     "minify": {
       "enabled": true,
       "renameLocals": false
-    },
-    // Optionally generate .map file
-    "sourceMap": false
+    }
   }
 ]

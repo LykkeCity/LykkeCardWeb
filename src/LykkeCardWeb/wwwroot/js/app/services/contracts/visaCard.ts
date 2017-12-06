@@ -8,6 +8,8 @@
         pan: string;
         status: string;
         balance: number;
+
+        flipped: boolean;
     }
 
     export enum CardType {

@@ -24,6 +24,7 @@ module CardModule {
         card: VisaCard;
         viewPinForm: ViewPinForm;
         scope: ng.IScope;
+        activateCardForm: ActivateCardForm;
 
         constructor(cardService: ICardService, scope: ng.IScope, interval: ng.IIntervalService) {
             this.init(cardService, scope, interval);
@@ -72,6 +73,7 @@ module CardModule {
             this.card = null;
             this.viewPinForm = new ViewPinForm();
             this.viewPinForm.seconds = 0;
+            this.activateCardForm = new ActivateCardForm();
         }
 
         addCard() {
@@ -84,13 +86,8 @@ module CardModule {
 
         backToMainScreen() {
             this.action = '';
-        }
-
-        finish() {
-            this.cardService.getCards((cards) => {
-                this.cards = cards;
-                this.backToMainScreen();
-            });
+            this.newCard = new CardRequest();
+            this.newCard.currency = this.settings.availableCurrencies[0];
         }
 
         updateFee() {
@@ -123,6 +120,7 @@ module CardModule {
                     this.createCardError = result.error.errorMessage;
                     $('#modal_error').modal();
                 } else {
+                    this.cards.push(result.result.card);
                     this.qrcode = this.generateQrCode(result.result.operationId);
                     $('#modal_qrcode').modal();
                 }
@@ -142,30 +140,26 @@ module CardModule {
         viewPin() {
             $('#pin-loading').removeClass('hidden');
             $('#wc_cors_button').attr('disabled', 'disabled');
+            this.viewPinForm.seconds = this.card.cardType === CardType.Plastic ? 30 : 60;
 
             this.cardService.getViewPinToken(this.card.id,
                 (result) => {
                     if (result.error) {
                         this.createCardError = result.error.errorMessage;
                     } else {
-                        console.log(result.result);
                         wc_cors.getCardData(result.result);
 
                         $('#wc_cors_wrap').on('DOMNodeInserted', () => {
                             $('#pin-loading').addClass('hidden');
                             $('#pin-note').removeClass('hidden');
 
-                            this.scope.$apply(() => {
-                                this.viewPinForm.seconds = 30;
-                            });
-
-                            if (angular.isDefined(this.viewPinForm.interval))
-                                this.interval.cancel(this.viewPinForm.interval);
+                            this.resetCounter(false);
 
                             this.viewPinForm.interval = this.interval(() => {
                                 this.scope.$apply(() => { this.viewPinForm.seconds--; });
                                 if (this.viewPinForm.seconds <= 0) {
-                                    this.closeViewPin();
+
+
                                     $('#pin-note').addClass('hidden');
                                 }
                             }, 1000, null, null, this.viewPinForm);
@@ -173,8 +167,7 @@ module CardModule {
                         });
 
                         $('#wc_cors_wrap').on('DOMNodeRemoved', () => {
-                            if (angular.isDefined(this.viewPinForm.interval))
-                                this.interval.cancel(this.viewPinForm.interval);
+                            this.resetCounter(false);
                             $('#pin-note').addClass('hidden');
                         });
                     }
@@ -182,9 +175,46 @@ module CardModule {
         }
 
         closeViewPin() {
+            this.resetCounter(true);
+        }
+
+        activateCard(card: VisaCard) {
+            this.cardService.activateCard(new ActivateCardRequest(card.id, this.activateCardForm.pan), (result) => {
+                if (result.error) {
+                    this.activateCardForm.message = result.error.errorMessage;
+                } else {
+                    card.flipped = false;
+                    card.status = 'Activated';
+                }
+            });
+        }
+
+        toggleActivate(card: VisaCard) {
+            this.backToMainScreen();
+            if (card.flipped)
+                this.activateCardForm = new ActivateCardForm();
+
+            card.flipped = !card.flipped;
+        }
+
+        payCard(cardId: string) {
+            this.backToMainScreen();
+            this.cardService.payCard(cardId, (result) => {
+                if (result.error) {
+                    //this.activateCardForm.message = result.error.errorMessage;
+                } else {
+                    this.qrcode = this.generateQrCode(result.result);
+                    $('#modal_qrcode').modal();
+                }
+            });
+        }
+
+        private resetCounter(reload:boolean) {
             if (angular.isDefined(this.viewPinForm.interval)) {
                 this.interval.cancel(this.viewPinForm.interval);
-                wc_cors.reload();
+
+                if (reload)
+                    wc_cors.reload();
             }
         }
     }
@@ -200,5 +230,10 @@ module CardModule {
     export class ViewPinForm {
         interval: IPromise<any>;
         seconds: number;
+    }
+
+    export class ActivateCardForm {
+        pan: string;
+        message: string;
     }
 }

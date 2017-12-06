@@ -2,7 +2,7 @@
 /// <reference path="../typings/globals/jquery/index.d.ts" />
 
 module CardModule {
-    angular.module('cardApp', ['monospaced.qrcode', 'slickCarousel']).run($http => {
+    angular.module('cardApp', ['monospaced.qrcode', 'slick']).run($http => {
         $http.defaults.headers.common['RequestVerificationToken'] = angular.element('input[name="__RequestVerificationToken"]').attr('value');
         $('.ng-hidden').removeClass('ng-hidden');
     });

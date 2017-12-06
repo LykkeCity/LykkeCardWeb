@@ -63,9 +63,6 @@ namespace LykkeCardWeb.Controllers
 
                 var result = await _visaCardClient.CardRequestAsync(model);
 
-                if (result.Error != null)
-                    return BadRequest(result);
-
                 return Ok(result);
             }
             catch
@@ -83,8 +80,42 @@ namespace LykkeCardWeb.Controllers
                 var clientId = User.GetClientId();
                 var result = await _visaCardClient.GetViewPinTokenAsync(clientId, cardId);
 
-                if (result.Error != null)
-                    return BadRequest(result);
+                return Ok(result);
+            }
+            catch
+            {
+                return BadRequest(new ApiResponse<SettingsResponse> { Error = new ErrorResponse(ValidationError.TechnicalProblem, "Technical problem") });
+            }
+        }
+
+        [HttpPost]
+        [Route("activate")]
+        public async Task<IActionResult> ActivateCard([FromBody]ActivateCardRequest model)
+        {
+            try
+            {
+                var clientId = User.GetClientId();
+                model.ClientId = clientId;
+
+                var result = await _visaCardClient.ActivateCardAsync(model);
+
+                return Ok(result);
+            }
+            catch
+            {
+                return BadRequest(new ApiResponse<SettingsResponse> { Error = new ErrorResponse(ValidationError.TechnicalProblem, "Technical problem") });
+            }
+        }
+
+        [HttpPost]
+        [Route("pay")]
+        public async Task<IActionResult> PayCard([FromBody]string cardId)
+        {
+            try
+            {
+                var clientId = User.GetClientId();
+
+                var result = await _visaCardClient.SendVisaPaymentAsync(new PaymentRequest{ClientId = clientId, CardId = cardId});
 
                 return Ok(result);
             }
