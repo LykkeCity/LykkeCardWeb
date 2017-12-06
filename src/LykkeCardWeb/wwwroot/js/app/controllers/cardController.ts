@@ -39,7 +39,7 @@ module CardModule {
                         this.createCardError = result.error.errorMessage;
                         $('#modal_error').modal();
                     } else {
-                        this.error = result.error.code;
+                        this.error = result.error.errorMessage;
                     }
                 } else {
                     this.settings = result.result.settings;
@@ -87,7 +87,9 @@ module CardModule {
         backToMainScreen() {
             this.action = '';
             this.newCard = new CardRequest();
-            this.newCard.currency = this.settings.availableCurrencies[0];
+
+            if (this.settings.availableCurrencies)
+                this.newCard.currency = this.settings.availableCurrencies[0];
         }
 
         updateFee() {

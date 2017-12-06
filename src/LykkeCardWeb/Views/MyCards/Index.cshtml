@@ -4,7 +4,7 @@
             <div class="row">
                 <div class="col-md-6 automargin">
                     <h2>My LykkeCards</h2>
-                    <div class="card_list" data-ng-hide="vm.cards.length">
+                    <div class="card_list ng-hidden" data-ng-hide="vm.cards.length">
                         <div class="card_item">
                             <div class="card_preview">
                                 <div class="card_preview__front">
@@ -101,7 +101,7 @@
                         </div>
                     </slick>
 
-                    <div class="text-center">
+                    <div class="text-center ng-hidden">
                         <a href="#add" class="btn btn--primary" data-ng-click="vm.addCard()">Add card</a>
                     </div>
                 </div>
@@ -253,10 +253,27 @@
                 </div>
             </div>
             <div class="row" data-ng-if="vm.action === 'error'">
-                <h2>Error</h2>
-                <div data-ng-bind="vm.error"></div>
-                <a href="https://kyc-dev.lykkex.net">Pass KYC here</a>
-                <a href="#" class="btn btn-block btn--primary" data-ng-click="vm.backToMainScreen()">Close</a>
+                <div class="alert_message">
+                    <div class="alert_message__icon">
+                        <img src="images/info_icn.svg" alt="info" width="64" height="64">
+                        <!--<img src="images/error_icn.svg" alt="error" width="64" height="64">-->
+                        <!--<img src="images/success_icn.svg" alt="success" width="64" height="64">-->
+                    </div>
+                    <div class="alert_message__title" data-ng-bind="vm.error"></div>
+                    <div class="alert_message__links">
+                        <a href="https://kyc-dev.lykkex.net">
+                            <img src="images/play_black_icn.svg" width="24" height="24" alt="video">
+                            <span>Process KYC here</span>
+                        </a>
+                    </div>
+                    <div class="alert_message__button">
+                        <a href="#" class="btn btn--primary" data-ng-click="vm.backToMainScreen()">Go back to My LykkeCards</a>
+                    </div>
+
+                    <div class="alert_message__footer">
+                        <p>If you have any other problem contact our support: <a href="mailto:support@lykke.com">support@lykke.com</a></p>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
