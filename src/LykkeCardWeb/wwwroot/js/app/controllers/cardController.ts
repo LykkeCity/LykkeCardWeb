@@ -43,6 +43,7 @@ module CardModule {
                     }
                 } else {
                     this.settings = result.result.settings;
+                    this.settings.isCardCreationFree = result.result.isCardCreationFree;
                     this.newCard.currency = this.settings.availableCurrencies[0];
                     this.updateFee();
                 }
@@ -84,6 +85,10 @@ module CardModule {
             }
         }
 
+        addCardDisabled() {
+            return this.cards && this.cards.filter(item => item.status === 'Pending' || item.status === 'NeedPayment').length;
+        }
+
         backToMainScreen() {
             this.action = '';
             this.newCard = new CardRequest();
@@ -98,7 +103,7 @@ module CardModule {
             this.fees.virtualCreation = this.settings.virtualCreationPrices.filter(item => item.currency === this.newCard.currency)[0].fee.total;
 
             if (this.newCard.cardType === CardType.Plastic) {
-                creation = this.fees.plasticCreation;
+                creation = this.settings.isCardCreationFree ? 0 : this.fees.plasticCreation;
                 this.fees.standard = this.settings.standardDeliveryPrices.filter(item => item.currency === this.newCard.currency)[0].fee.total;
                 this.fees.express = this.settings.expressDeliveryPrices.filter(item => item.currency === this.newCard.currency)[0].fee.total;
             } else {

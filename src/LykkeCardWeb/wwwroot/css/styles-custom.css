@@ -36,3 +36,8 @@
 .all-height {
     height: 100%;
 }
+
+.free {
+    color: #13b72a !important;
+    font-weight: bold;
+}

@@ -6,6 +6,7 @@
         virtualCreationPrices: Price[];
         standardDeliveryPrices: Price[];
         expressDeliveryPrices: Price[];
+        isCardCreationFree: boolean;
     }
 
     export class Country {

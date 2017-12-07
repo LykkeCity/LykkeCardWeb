@@ -19,8 +19,8 @@
                                                 <span class="card_mask__group">&middot;&middot;&middot;&middot;</span>
                                             </span>
                                         </div>
-                                        <div class="card_preview__date"></div>
-                                        <div class="card_preview__name"></div>
+                                        <div class="card_preview__date">00/00</div>
+                                        <div class="card_preview__name">Cardholder name</div>
                                     </div>
                                 </div>
                                 <div class="card_preview__back"></div>
@@ -102,7 +102,7 @@
                     </slick>
 
                     <div class="text-center ng-hidden">
-                        <a href="#add" class="btn btn--primary" data-ng-click="vm.addCard()">Add card</a>
+                        <a href="#add" class="btn btn--primary" data-ng-click="vm.addCardDisabled() || vm.addCard()" data-ng-disabled="vm.addCardDisabled()" disabled>Add card</a>
                     </div>
                 </div>
             </div>
@@ -125,7 +125,7 @@
                                         <label for="r1" class="control-label">
                                             <i class="icon icon--plastic_card"></i>
                                             <span class="radio__title">Plastic</span>
-                                            <span class="hint" data-ng-bind="vm.fees.plasticCreation + ' ' + vm.newCard.currency"></span>
+                                            <span class="hint" data-ng-class="{'free': vm.settings.isCardCreationFree}" data-ng-bind="vm.settings.isCardCreationFree ? 'Free' : vm.fees.plasticCreation + ' ' + vm.newCard.currency"></span>
                                         </label>
                                     </div>
                                     <div class="radio radio--plate">
