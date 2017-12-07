@@ -134,9 +134,26 @@ module CardModule {
         }
 
         showPinModal(card: VisaCard) {
-            this.backToMainScreen();
-            this.card = card;
-            $('#modal_showPin').modal();
+            card.flipped = false; 
+            this.showCardModal(card, '#modal_showPin');
+        }
+
+        closeViewPin() {
+            this.resetCounter(true);
+        }
+
+        showBlockModal(card: VisaCard) {
+            card.flipped = false; 
+            this.showCardModal(card, '#modal_blockCard');
+        }
+
+        blockCard() {
+            this.cardService.blockCard(this.card.id, (result) => {
+                if (result) {
+                    this.card.status = this.card.status === 'Activated' ? 'Blocked' : 'Activated';
+                }
+                $('#modal_blockCard').modal('hide');
+            });
         }
 
         viewPin() {
@@ -174,10 +191,6 @@ module CardModule {
                         });
                     }
                 });
-        }
-
-        closeViewPin() {
-            this.resetCounter(true);
         }
 
         activateCard(card: VisaCard) {
@@ -218,6 +231,12 @@ module CardModule {
                 if (reload)
                     wc_cors.reload();
             }
+        }
+
+        private showCardModal(card: VisaCard, modal: string) {
+            this.backToMainScreen();
+            this.card = card;
+            $(modal).modal();
         }
     }
 

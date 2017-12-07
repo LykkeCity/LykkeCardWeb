@@ -6,6 +6,7 @@
         getViewPinToken(cardId: string, callback: Function);
         activateCard(request: ActivateCardRequest, callback: Function);
         payCard(cardId: string, callback: Function);
+        blockCard(cardId: string, callback: Function);
     }
 
     export class CardService implements ICardService {
@@ -59,6 +60,14 @@
 
         payCard(cardId: string, callback: Function) {
             return this.http.post('/api/cards/pay', '"' + cardId + '"').then((data) => {
+                callback(data.data);
+            }, (data) => {
+                callback(data.data);
+            });
+        }
+
+        blockCard(cardId: string, callback: Function) {
+            return this.http.post('/api/cards/block', '"' + cardId + '"').then((data) => {
                 callback(data.data);
             }, (data) => {
                 callback(data.data);

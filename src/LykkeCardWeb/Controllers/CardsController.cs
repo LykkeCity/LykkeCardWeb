@@ -124,5 +124,35 @@ namespace LykkeCardWeb.Controllers
                 return BadRequest(new ApiResponse<SettingsResponse> { Error = new ErrorResponse(ValidationError.TechnicalProblem, "Technical problem") });
             }
         }
+
+        [HttpPost]
+        [Route("block")]
+        public async Task<IActionResult> BlockCard([FromBody]string cardId)
+        {
+            try
+            {
+                var clientId = User.GetClientId();
+
+                var cardResult = await _visaCardClient.GetClientCardAsync(clientId, cardId);
+
+                if (cardResult.Error == null && (cardResult.Result.Status == CardStatus.Activated || cardResult.Result.Status == CardStatus.Blocked))
+                {
+                    var result = await _visaCardClient.UpdateCardStatusAsync(new UpdateCardStatusModel
+                    {
+                        ClientId = clientId,
+                        CardId = cardId,
+                        Status = cardResult.Result.Status == CardStatus.Activated ? CardStatus.Blocked : CardStatus.Activated
+                    });
+
+                    return Ok(new {result = result.Result});
+                }
+
+                return Ok(new { result = false });
+            }
+            catch
+            {
+                return BadRequest(new ApiResponse<SettingsResponse> { Error = new ErrorResponse(ValidationError.TechnicalProblem, "Technical problem") });
+            }
+        }
     }
 }
