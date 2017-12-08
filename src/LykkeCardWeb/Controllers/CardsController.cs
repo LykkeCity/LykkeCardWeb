@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using System.Threading.Tasks;
 using Lykke.Service.Visa.Client;
 using Lykke.Service.Visa.Client.AutorestClient.Models;
@@ -28,7 +29,8 @@ namespace LykkeCardWeb.Controllers
             {
                 var clientId = User.GetClientId();
                 var cards = await _visaCardClient.GetClientCardsAsync(clientId);
-                return Ok(cards.Result);
+
+                return Ok(cards.Result.OrderByDescending(item => item.CreationDate));
             }
             catch
             {

@@ -3,8 +3,11 @@
         <div class="container">
             <div class="row">
                 <div class="col-md-6 automargin">
-                    <h2>My LykkeCards</h2>
-                    <div class="card_list ng-hidden" data-ng-hide="vm.cards.length">
+                    <h2>My Lykke Prepaid Сards</h2>
+                    <div class="spinner_container" data-ng-hide="!vm.pageState.loading">
+                        <div class="spinner"></div>
+                    </div>
+                    <div class="card_list ng-hidden" data-ng-hide="vm.pageState.loading || vm.data.cards.length">
                         <div class="card_item">
                             <div class="card_preview">
                                 <div class="card_preview__front">
@@ -28,13 +31,14 @@
                             <div class="card_actions"></div>
                         </div>
                     </div>
-                    <slick init-onload=true data="vm.cards" class="card_list slick-slider ng-hidden" infinite="false" speed="300" slides-to-show="1" slides-to-scroll="1" variable-width="true" settings="vm.slickConfig" data-ng-if="vm.cards.length">
-                        <div class="card_item" data-ng-repeat="card in vm.cards">
+                    <div slick init-onload="true" data="vm.data.cards" class="card_list slick-slider ng-hidden" 
+                           infinite="false" speed="300" slides-to-show="1" slides-to-scroll="1" variable-width="true" data-ng-hide="vm.pageState.loading" data-ng-if="vm.data.cards.length">
+                        <div class="card_item" data-ng-repeat="card in vm.data.cards">
                             <div class="card_preview" data-ng-class="{'card_preview--flipped': card.flipped}">
                                 <div class="card_preview__front">
                                     <img src="images/card.png" alt="card" width="500" class="card_preview__image">
                                     <div class="card_preview__label">
-                                        <span class="label" data-ng-bind="card.status"></span>
+                                        <span class="label" data-ng-class="{'label--blue': card.status === 'Activated' && card.cardType === 'Virtual', 'label--yellow': card.status === 'NeedPayment'}" data-ng-hide="card.status === 'Activated'" data-ng-bind="vm.getCardStatusName(card)"></span>
                                     </div>
                                     <div class="card_preview__info">
                                         <div class="card_preview__number">
@@ -60,13 +64,17 @@
                                                 <label for="code" class="control-label">Last 4 digits on the card</label>
                                                 <div class="relative">
                                                     <div class="pull-right">
-                                                        <button type="button" class="btn btn--primary _flip_card" data-ng-click="vm.activateCard(card)">Submit</button>
+                                                        <button type="button" class="btn btn--primary _flip_card" data-ng-click="vm.activateCard(card)" data-ng-disabled="vm.activateCardForm.loading">
+                                                            <span class="spinner spinner--small" data-ng-show="vm.activateCardForm.loading"></span> <span data-ng-hide="vm.activateCardForm.loading">Submit</span>
+                                                        </button>
                                                     </div>
                                                     <div class="relative__input">
-                                                        <input type="text" maxlength="4" class="form-control" id="code" data-ng-model="vm.activateCardForm.pan">
+                                                        <input type="text" maxlength="4" class="form-control" 
+                                                               data-ng-class="{'error': vm.activateCardForm.message}"
+                                                               data-ng-model="vm.activateCardForm.pan">
                                                     </div>
                                                 </div>
-                                                <span class="hint hint--error" data-ng-bind="vm.activateCardForm.message"></span>
+                                                <div class="hint hint--error" data-ng-bind="vm.activateCardForm.message"></div>
                                             </div>
                                         </form>
                                     </div>
@@ -99,41 +107,41 @@
                                 </div>
                             </div>
                         </div>
-                    </slick>
+                    </div>
 
-                    <div class="text-center ng-hidden">
-                        <a href="#add" class="btn btn--primary" data-ng-click="vm.addCardDisabled() || vm.addCard()" data-ng-disabled="vm.addCardDisabled()" disabled>Add card</a>
+                    <div class="card_footer ng-hidden" data-ng-hide="vm.pageState.loading">
+                        <a href="#add" class="btn btn--primary" data-ng-click="vm.addCardDisabled() || vm.addCard()" data-ng-disabled="vm.addCardDisabled()" disabled="disabled">Add card</a>
                     </div>
                 </div>
             </div>
 
         </div>
     </section>
-    <section class="section section--card_form ng-hidden" id="add" data-ng-if="vm.action">
+    <section class="section section--card_form ng-hidden" id="add" data-ng-if="vm.pageState.action">
         <div class="container">
-            <div class="row" data-ng-if="vm.action === 'add'">
+            <div class="row" data-ng-if="vm.pageState.action === 'add'">
                 <div class="col-md-11 col-md-offset-1">
                     <div class="section_title">New LykkeCard</div>
                     <h3>Card info</h3>
 
                     <div class="row">
                         <div class="col-md-7">
-                            <form class="form form--simple" name="vm.newCardForm" novalidate>
+                            <form class="form form--simple" name="vm.newCardForm.form" novalidate>
                                 <div class="radio-group">
                                     <div class="radio radio--plate">
-                                        <input type="radio" id="r1" data-ng-model="vm.newCard.cardType" value="Plastic" data-ng-click="vm.updateFee()">
+                                        <input type="radio" id="r1" data-ng-model="vm.newCardForm.newCard.cardType" value="Plastic" data-ng-click="vm.updateFee()">
                                         <label for="r1" class="control-label">
                                             <i class="icon icon--plastic_card"></i>
                                             <span class="radio__title">Plastic</span>
-                                            <span class="hint" data-ng-class="{'free': vm.settings.isCardCreationFree}" data-ng-bind="vm.settings.isCardCreationFree ? 'Free' : vm.fees.plasticCreation + ' ' + vm.newCard.currency"></span>
+                                            <span class="hint" data-ng-class="{'free': vm.data.settings.isCardCreationFree}" data-ng-bind="vm.data.settings.isCardCreationFree ? 'Free' : vm.data.fees.plasticCreation + ' ' + vm.newCardForm.newCard.currency"></span>
                                         </label>
                                     </div>
                                     <div class="radio radio--plate">
-                                        <input type="radio" id="r2" data-ng-model="vm.newCard.cardType" value="Virtual" data-ng-click="vm.updateFee()">
+                                        <input type="radio" id="r2" data-ng-model="vm.newCardForm.newCard.cardType" value="Virtual" data-ng-click="vm.updateFee()">
                                         <label for="r2" class="control-label">
                                             <i class="icon icon--virtual_card"></i>
                                             <span class="radio__title">Virtual</span>
-                                            <span class="hint" data-ng-bind="vm.fees.virtualCreation + ' ' + vm.newCard.currency"></span>
+                                            <span class="hint" data-ng-bind="vm.data.fees.virtualCreation + ' ' + vm.newCardForm.newCard.currency"></span>
                                         </label>
                                     </div>
                                 </div>
@@ -144,8 +152,8 @@
                                     </div>
                                     <div class="col-md-8">
                                         <div class="form-group">
-                                            <div class="radio btn-block" data-ng-repeat="currency in vm.settings.availableCurrencies">
-                                                <input type="radio" id="radio{{$index}}" class="radio__control" data-ng-model="vm.newCard.currency" data-ng-value="currency" data-ng-click="vm.updateFee()">
+                                            <div class="radio btn-block" data-ng-repeat="currency in vm.data.settings.availableCurrencies">
+                                                <input type="radio" id="radio{{$index}}" class="radio__control" data-ng-model="vm.newCardForm.newCard.currency" data-ng-value="currency" data-ng-click="vm.updateFee()">
                                                 <label for="radio{{$index}}" class="form-control control-label radio__label" data-ng-bind="currency"></label>
                                             </div>
                                         </div>
@@ -154,10 +162,10 @@
 
                                 <div class="form-group">
                                     <label for="card_name" class="control-label">Name on the card</label>
-                                    <input type="text" class="form-control" id="card_name" data-ng-model="vm.newCard.nameOnCard" maxlength="22" required>
+                                    <input type="text" class="form-control" id="card_name" data-ng-model="vm.newCardForm.newCard.nameOnCard" maxlength="22" required>
                                 </div>
 
-                                <div data-ng-show="vm.newCard.cardType == 'Plastic'">
+                                <div data-ng-show="vm.newCardForm.newCard.cardType == 'Plastic'">
                                     <h3>Delivery info</h3>
 
                                     <div class="row">
@@ -167,16 +175,16 @@
                                         <div class="col-md-8">
                                             <div class="form-group">
                                                 <div class="radio btn-block">
-                                                    <input type="radio" id="delivery1" class="radio__control" data-ng-model="vm.newCard.deliveryType" value="StandardTrackableDelivery" data-ng-click="vm.updateFee()">
+                                                    <input type="radio" id="delivery1" class="radio__control" data-ng-model="vm.newCardForm.newCard.deliveryType" value="StandardTrackableDelivery" data-ng-click="vm.updateFee()">
                                                     <label for="delivery1" class="form-control control-label radio__label">
-                                                        <span class="hint pull-right">7-13 days ({{vm.newCard.currency}} {{vm.fees.standard}})</span>
+                                                        <span class="hint pull-right">7-13 days ({{vm.newCardForm.newCard.currency}} {{vm.data.fees.standard}})</span>
                                                         <span class="radio__title">Standard</span>
                                                     </label>
                                                 </div>
                                                 <div class="radio btn-block">
-                                                    <input type="radio" id="delivery2" class="radio__control" data-ng-model="vm.newCard.deliveryType" value="ExpressDelivery" data-ng-click="vm.updateFee()">
+                                                    <input type="radio" id="delivery2" class="radio__control" data-ng-model="vm.newCardForm.newCard.deliveryType" value="ExpressDelivery" data-ng-click="vm.updateFee()">
                                                     <label for="delivery2" class="form-control control-label radio__label">
-                                                        <span class="hint pull-right">3-5 days ({{vm.newCard.currency}} {{vm.fees.express}})</span>
+                                                        <span class="hint pull-right">3-5 days ({{vm.newCardForm.newCard.currency}} {{vm.data.fees.express}})</span>
                                                         <span class="radio__title">Express</span>
                                                     </label>
                                                 </div>
@@ -191,8 +199,8 @@
                                         </label>
                                         <div class="select">
                                             <select id="countries" class="form-control form-control--select"
-                                                    data-ng-options="country.iso2 as country.name for country in vm.settings.availableCountries track by country.iso2"
-                                                    data-ng-model="vm.newCard.deliveryAddress.country" required></select>
+                                                    data-ng-options="country.iso2 as country.name for country in vm.data.settings.availableCountries track by country.iso2"
+                                                    data-ng-model="vm.newCardForm.newCard.deliveryAddress.country" required></select>
                                             <i class="icon icon--arrow-down"></i>
                                         </div>
                                     </div>
@@ -201,26 +209,28 @@
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="city" class="control-label">City</label>
-                                                <input type="text" class="form-control" id="city" data-ng-model="vm.newCard.deliveryAddress.city" required>
+                                                <input type="text" class="form-control" id="city" data-ng-model="vm.newCardForm.newCard.deliveryAddress.city" required>
                                             </div>
                                         </div>
                                         <div class="col-md-6">
                                             <div class="form-group">
                                                 <label for="zip" class="control-label">ZIP</label>
-                                                <input type="text" class="form-control" id="zip" data-ng-model="vm.newCard.deliveryAddress.zipCode" required>
+                                                <input type="text" class="form-control" id="zip" data-ng-model="vm.newCardForm.newCard.deliveryAddress.zipCode" required>
                                             </div>
                                         </div>
                                     </div>
 
                                     <div class="form-group">
                                         <label for="address" class="control-label">Address line</label>
-                                        <input type="text" class="form-control" id="address" data-ng-model="vm.newCard.deliveryAddress.address" required>
+                                        <input type="text" class="form-control" id="address" data-ng-model="vm.newCardForm.newCard.deliveryAddress.address" required>
                                     </div>
 
                                 </div>
 
                                 <div class="submit-group">
-                                    <button type="button" class="btn btn-block btn--primary btn-sm" data-ng-disabled="vm.isProceedDisabled()" data-ng-click="vm.proceed()">Proceed</button>
+                                    <button type="button" class="btn btn-block btn--primary btn-sm" data-ng-disabled="vm.isProceedDisabled()" data-ng-click="vm.proceed()">
+                                        <span class="spinner spinner--small" data-ng-show="vm.newCardForm.processing"></span> <span data-ng-hide="vm.newCardForm.processing">Proceed</span>
+                                    </button>
                                 </div>
                             </form>
                         </div>
@@ -228,7 +238,7 @@
                         <div class="col-xs-12 col-md-5">
                             <div class="total">
                                 <div class="total__header">
-                                    <div class="total__price" data-ng-bind="vm.fees.total + ' ' + vm.newCard.currency"></div>
+                                    <div class="total__price" data-ng-bind="vm.data.fees.total + ' ' + vm.newCardForm.newCard.currency"></div>
                                     <div class="total__title">Total price</div>
                                     <div class="total__hint">Payment only via a Lykke Wallet app</div>
                                 </div>
@@ -240,7 +250,7 @@
                                                 <a href="/" class="btn btn--flat">Download</a>
                                             </label>
                                         </div>*@
-                                    <div class="checkbox">
+                                    <div class="checkbox checkbox--checked">
                                         <label class="control-label">
                                             <span>You passed KYC</span>
                                             <a href="/" class="btn btn--flat">Go to KYC procedure</a>
@@ -252,14 +262,14 @@
                     </div>
                 </div>
             </div>
-            <div class="row" data-ng-if="vm.action === 'error'">
+            <div class="row" data-ng-if="vm.pageState.action === 'error'">
                 <div class="alert_message">
                     <div class="alert_message__icon">
                         <img src="images/info_icn.svg" alt="info" width="64" height="64">
                         <!--<img src="images/error_icn.svg" alt="error" width="64" height="64">-->
                         <!--<img src="images/success_icn.svg" alt="success" width="64" height="64">-->
                     </div>
-                    <div class="alert_message__title" data-ng-bind="vm.error"></div>
+                    <div class="alert_message__title" data-ng-bind="vm.pageState.error"></div>
                     <div class="alert_message__links">
                         <a href="https://kyc-dev.lykkex.net">
                             <img src="images/play_black_icn.svg" width="24" height="24" alt="video">
@@ -291,7 +301,10 @@
                                 <h3>Payment confirmation</h3>
                                 <div class="text">
                                     Instruction here<br />
-                                    <qrcode size="250" data="{{vm.qrcode}}"></qrcode>
+                                    <div class="spinner_container" data-ng-show="vm.qrCodeForm.loading">
+                                        <div class="spinner spinner--dark"></div>
+                                    </div>
+                                    <qrcode size="250" data="{{vm.qrCodeForm.qrcode}}" data-ng-hide="vm.qrCodeForm.loading"></qrcode>
                                 </div>
                             </div>
                             <div class="modal__footer">
@@ -315,7 +328,7 @@
 
                             <div class="modal__body">
                                 <h3>Error</h3>
-                                <div class="text" data-ng-bind="vm.createCardError"></div>
+                                <div class="text" data-ng-bind="vm.pageState.generalError"></div>
                             </div>
                             <div class="modal__footer">
                                 <button type="button" class="btn btn--flat" data-dismiss="modal">Okay :(</button>
@@ -337,13 +350,17 @@
                             <button type="button" class="close visible-xs" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 
                             <div class="modal__body">
-                                <h3 data-ng-bind="vm.card.cardType == 'Plastic' ? 'View pin' : 'View card details'"></h3>
-                                <div id="pin-loading" class="hidden">Loading...</div>
+                                <h3 data-ng-bind="vm.pageState.card.cardType == 'Plastic' ? 'View pin' : 'View card details'"></h3>
+                                <div class="spinner_container" data-ng-show="vm.viewPinForm.loading">
+                                    <div class="spinner spinner--dark"></div>
+                                </div>
                                 <div id="wc_cors_wrap"></div>
-                                <div id="pin-note" class="hidden">Will be visible within <span id="pin-seconds" data-ng-bind="vm.viewPinForm.seconds"></span> seconds.</div>
+                                <div data-ng-show="vm.viewPinForm.showNote">Will be visible within <span data-ng-bind="vm.viewPinForm.seconds"></span> seconds.</div>
                             </div>
                             <div class="modal__footer">
-                                <button id="wc_cors_button" type="button" class="btn btn--primary" data-ng-click="vm.viewPin()" data-ng-bind="vm.card.cardType == 'Plastic' ? 'View pin' : 'View details'">Show pin</button>
+                                <button id="wc_cors_button" type="button" class="btn btn--primary"
+                                        data-ng-disabled="vm.viewPinForm.loading || vm.viewPinForm.showNote" data-ng-click="vm.viewPin()" 
+                                        data-ng-bind="vm.pageState.card.cardType == 'Plastic' ? 'View pin' : 'View details'"></button>
                                 <button type="button" class="btn btn--flat" data-dismiss="modal" data-ng-click="vm.closeViewPin()">Close</button>
                             </div>
                         </div>
@@ -363,11 +380,13 @@
                             <button type="button" class="close visible-xs" data-dismiss="modal" aria-label="Close"><span aria-hidden="true">&times;</span></button>
 
                             <div class="modal__body">
-                                <h3 data-ng-bind="vm.card.status == 'Activated' ? 'Block card' : 'Unblock card'"></h3>
-                                <div class="text">Do you want to <span data-ng-bind="vm.card.status == 'Activated' ? 'block' : 'unblock'"></span> this card?</div>
+                                <h3 data-ng-bind="vm.pageState.card.status == 'Activated' ? 'Block card' : 'Unblock card'"></h3>
+                                <div class="text">Do you want to <span data-ng-bind="vm.pageState.card.status == 'Activated' ? 'block' : 'unblock'"></span> this card?</div>
                             </div>
                             <div class="modal__footer">
-                                <button type="button" class="btn btn--primary" data-ng-click="vm.blockCard()" data-ng-bind="vm.card.status == 'Activated' ? 'Block' : 'Unblock'"></button>
+                                <button type="button" class="btn btn--primary" data-ng-click="vm.blockCard()" data-ng-disabled="vm.blockCardForm.loading">
+                                    <span class="spinner spinner--small" data-ng-show="vm.blockCardForm.loading"></span> <span data-ng-hide="vm.blockCardForm.loading" data-ng-bind="vm.pageState.card.status == 'Activated' ? 'Block' : 'Unblock'"></span>
+                                </button>
                                 <button type="button" class="btn btn--flat" data-dismiss="modal">Close</button>
                             </div>
                         </div>
@@ -377,7 +396,7 @@
         </div>
     </div>
 
-    <div data-ng-show="vm.action" class="ng-hidden">
+    <div data-ng-show="vm.pageState.action" class="ng-hidden">
         @Html.Partial("_Footer")
     </div>
 </div>

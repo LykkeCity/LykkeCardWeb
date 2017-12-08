@@ -1,7 +1,7 @@
 ﻿module CardModule {
     export interface ICardService {
-        getCards(successCallback: Function);
-        getSettings(successCallback: Function);
+        getCards(successCallback: Function): ng.IPromise<void>;
+        getSettings(successCallback: Function): ng.IPromise<void>;
         createCard(cardRequest: CardRequest, callback: Function);
         getViewPinToken(cardId: string, callback: Function);
         activateCard(request: ActivateCardRequest, callback: Function);
@@ -10,23 +10,25 @@
     }
 
     export class CardService implements ICardService {
-        static $inject = ['$http'];
+        static $inject = ['$http', '$q'];
 
         http: ng.IHttpService;
+        q: ng.IQService;
 
-        constructor($http: ng.IHttpService) {
+        constructor($http: ng.IHttpService, $q: ng.IQService) {
             this.http = $http;
+            this.q = $q;
         }
 
-        getCards(successCallback: Function) {
-            this.http.get('/api/cards/all').then((data) => {
-                successCallback(data.data);
+        getCards(callback: Function): ng.IPromise<void> {
+            return this.http.get('/api/cards/all').then((data) => {
+                callback(data.data);
             }, (error) => {
-                successCallback(error);
+                callback(error);
             });
         }
 
-        getSettings(successCallback: Function) {
+        getSettings(successCallback: Function): ng.IPromise<void> {
             return this.http.get('/api/cards/settings').then((data) => {
                 successCallback(data.data);
             }, (error) => {

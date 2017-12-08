@@ -16,4 +16,14 @@
         Plastic = 'Plastic',
         Virtual = 'Virtual'
     }
+
+    export enum CardStatus {
+        NeedPayment = 'NeedPayment',
+        Pending = 'Pending',
+        NeedKyc = 'NeedKyc',
+        Issued = 'Issued',
+        Shipping = 'Shipping',
+        Activated = 'Activated',
+        Blocked = 'Blocked'
+    }
 }
