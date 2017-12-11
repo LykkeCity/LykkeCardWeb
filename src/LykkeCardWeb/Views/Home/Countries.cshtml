@@ -7,7 +7,7 @@
             <div class="section_title">List of eligible countries</div>
         </div>
 
-        <h3>Europe</h3>
+        <h3>European Economic Area</h3>
         <ul class="list list_countries">
             <li class="list_item">
                 <img src="/images/countries/austria_flag.png" alt="Austria" width="28" height="20">
@@ -205,13 +205,28 @@
     </div>
 </section>
 
-<script>
-    $(function () {
-        var body = $("body");
-        if (!body.hasClass("page_inner")) {
-            body.addClass("page_inner");
-        }
-    })
-</script>
-
 @Html.Partial("_Footer")
+
+@section Scripts{
+    <environment include="Development">
+        <script src="~/vendor/jquery.min.js"></script>
+        <script src="~/vendor/bootstrap.min.js"></script>
+        <script src="~/js/index.js"></script>
+        <script src="~/vendor/angular.min.js"></script>
+        <script src="~/js/app/services/subscribeService.js"></script>
+        <script src="~/js/app/controllers/subscribeController.js"></script>
+        <script src="~/js/app/subscribeModule.js"></script>
+    </environment>
+    <environment include="Staging,Production">
+        <script src="~/dist/index.min.js"></script>
+    </environment>
+
+    <script>
+        $(function () {
+            var body = $("body");
+            if (!body.hasClass("page_inner")) {
+                body.addClass("page_inner");
+            }
+        })
+    </script>
+}

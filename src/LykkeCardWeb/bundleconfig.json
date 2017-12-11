@@ -11,7 +11,11 @@
     "inputFiles": [
       "wwwroot/vendor/jquery.min.js",
       "wwwroot/vendor/bootstrap.min.js",
-      "wwwroot/js/index.js"
+      "wwwroot/js/index.js",
+      "wwwroot/vendor/angular.js",
+      "wwwroot/js/app/services/subscribeService.js",
+      "wwwroot/js/app/controllers/subscribeController.js",
+      "wwwroot/js/app/subscribeModule.js"
     ],
     "minify": {
       "enabled": true,
@@ -31,7 +35,7 @@
       "wwwroot/js/app/services/contracts/*.js",
       "wwwroot/js/app/services/*.js",
       "wwwroot/js/app/controllers/*.js",
-      "wwwroot/js/app/*.js"
+      "wwwroot/js/app/cardModule.js"
     ],
     "minify": {
       "enabled": true,
