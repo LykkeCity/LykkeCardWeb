@@ -31,8 +31,8 @@
                             <div class="card_actions"></div>
                         </div>
                     </div>
-                    <div slick init-onload="true" data="vm.data.cards" class="card_list slick-slider ng-hidden" 
-                           infinite="false" speed="300" slides-to-show="1" slides-to-scroll="1" variable-width="true" data-ng-hide="vm.pageState.loading" data-ng-if="vm.data.cards.length">
+                    <div slick init-onload="true" data="vm.data.cards" class="card_list slick-slider ng-hidden"
+                         infinite="false" speed="300" slides-to-show="1" slides-to-scroll="1" variable-width="true" data-ng-hide="vm.pageState.loading" data-ng-if="vm.data.cards.length">
                         <div class="card_item" data-ng-repeat="card in vm.data.cards">
                             <div class="card_preview" data-ng-class="{'card_preview--flipped': card.flipped}">
                                 <div class="card_preview__front">
@@ -69,7 +69,7 @@
                                                         </button>
                                                     </div>
                                                     <div class="relative__input">
-                                                        <input type="text" maxlength="4" class="form-control" 
+                                                        <input type="text" maxlength="4" class="form-control"
                                                                data-ng-class="{'error': vm.activateCardForm.message}"
                                                                data-ng-model="vm.activateCardForm.pan">
                                                     </div>
@@ -359,7 +359,7 @@
                             </div>
                             <div class="modal__footer">
                                 <button id="wc_cors_button" type="button" class="btn btn--primary"
-                                        data-ng-disabled="vm.viewPinForm.loading || vm.viewPinForm.showNote" data-ng-click="vm.viewPin()" 
+                                        data-ng-disabled="vm.viewPinForm.loading || vm.viewPinForm.showNote" data-ng-click="vm.viewPin()"
                                         data-ng-bind="vm.pageState.card.cardType == 'Plastic' ? 'View pin' : 'View details'"></button>
                                 <button type="button" class="btn btn--flat" data-dismiss="modal" data-ng-click="vm.closeViewPin()">Close</button>
                             </div>
@@ -406,4 +406,25 @@
     <script type="text/javascript">
         wc_cors.init('https://wcapi.wavecrest.in');
     </script>
+
+    <environment include="Development">
+        <script src="~/vendor/jquery.min.js"></script>
+        <script src="~/vendor/bootstrap.min.js"></script>
+        <script src="~/vendor/angular.min.js"></script>
+        <script src="~/vendor/slick.min.js"></script>
+        <script src="~/vendor/angular-slick.min.js"></script>
+        <script src="~/vendor/qrcode.js"></script>
+        <script src="~/vendor/angular-qrcode.js"></script>
+        <script src="~/js/app/services/contracts/visaCard.js"></script>
+        <script src="~/js/app/services/contracts/cardRequest.js"></script>
+        <script src="~/js/app/services/contracts/visaSettings.js"></script>
+        <script src="~/js/app/services/cardService.js"></script>
+        <script src="~/js/app/services/subscribeService.js"></script>
+        <script src="~/js/app/controllers/cardController.js"></script>
+        <script src="~/js/app/controllers/subscribeController.js"></script>
+        <script src="~/js/app/cardModule.js"></script>
+    </environment>
+    <environment include="Staging,Production">
+        <script src="~/dist/app.min.js"></script>
+    </environment>
 }

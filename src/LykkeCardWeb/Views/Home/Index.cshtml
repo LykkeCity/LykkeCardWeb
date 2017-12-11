@@ -93,13 +93,14 @@
     </div>
 </section>
 <div class="container container_separator"><hr></div>
-<section class="section section_fees" id="fees">
+<section class="section section_gray section_fees" id="fees">
     <div class="container">
         <div class="section_header">
             <div class="section_icon"><img src="/images/fees_icn.svg" width="64px" alt="fees"></div>
             <div class="hint">Card fees</div>
-            <div class="section_title">The Power of Limits</div>
+            <div class="section_title">Power of limits</div>
         </div>
+        <div class="section_subtitle">Fees</div>
         <table class="table table_fees">
             <tbody class="hidden-small">
                 <tr>
@@ -201,21 +202,21 @@
                         <div class="_title">EUR</div>
                         <div class="_value">
                             <p class="text-center">FREE</p>
-                            EUR 10 if the total amount spent is below EUR 3,000/year
+                            <div class="text-hint">EUR 10 if the total amount spent is below EUR 3,000/year</div>
                         </div>
                     </td>
                     <td class="_cur">
                         <div class="_title">GBP</div>
                         <div class="_value">
                             <p class="text-center">FREE</p>
-                            GBP 10 if the total amount spent is below GBP 3,000/year
+                            <div class="text-hint">GBP 10 if the total amount spent is below GBP 3,000/year</div>
                         </div>
                     </td>
                     <td class="_cur">
                         <div class="_title">USD</div>
                         <div class="_value">
                             <p class="text-center">FREE</p>
-                            USD 10 if the total amount spent is below USD 3,000/year
+                            <div class="text-hint">USD 10 if the total amount spent is below USD 3,000/year</div>
                         </div>
                     </td>
                 </tr>
@@ -239,9 +240,8 @@
             </tbody>
             <tbody>
                 <tr>
-                    <td colspan="3">
-                        <br />
-                        <p>* Please be advised that some ATMs may charge their own fees – Lykke has no control over those fees and they are excluded from the fee that Lykke has in place.</p>
+                    <td colspan="4" style="border-bottom: 0">
+                        <div class="text-hint">* Please be advised that some ATMs may charge their own fees – Lykke has no control over those fees and they are excluded from the fee that Lykke has in place.</div>
                     </td>
                 </tr>
             </tbody>
@@ -286,3 +286,14 @@
 </section>
 
 @Html.Partial("_Footer")
+
+@section Scripts{ 
+    <environment include="Development">
+        <script src="~/vendor/jquery.min.js"></script>
+        <script src="~/vendor/bootstrap.min.js"></script>
+        <script src="~/js/index.js"></script>
+    </environment>
+    <environment include="Staging,Production">
+        <script src="~/dist/index.min.js"></script>
+    </environment>
+}

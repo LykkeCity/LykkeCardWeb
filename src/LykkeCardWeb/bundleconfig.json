@@ -7,7 +7,19 @@
     ]
   },
   {
-    "outputFileName": "wwwroot/dist/site.min.js",
+    "outputFileName": "wwwroot/dist/index.min.js",
+    "inputFiles": [
+      "wwwroot/vendor/jquery.min.js",
+      "wwwroot/vendor/bootstrap.min.js",
+      "wwwroot/js/index.js"
+    ],
+    "minify": {
+      "enabled": true,
+      "renameLocals": false
+    }
+  },
+  {
+    "outputFileName": "wwwroot/dist/app.min.js",
     "inputFiles": [
       "wwwroot/vendor/jquery.min.js",
       "wwwroot/vendor/bootstrap.min.js",
