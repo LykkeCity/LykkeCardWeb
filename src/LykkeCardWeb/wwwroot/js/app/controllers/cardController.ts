@@ -248,6 +248,7 @@ module CardModule {
                 case CardStatus.Shipping:
                     return 'Not activated';
                 case CardStatus.Pending:
+                    return 'Pending';
                 case CardStatus.NeedPayment:
                     return 'Unpaid';
                 case CardStatus.Blocked:
