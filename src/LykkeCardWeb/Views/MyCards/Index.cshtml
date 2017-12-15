@@ -38,7 +38,7 @@
                                 <div class="card_preview__front">
                                     <img src="images/card.png" alt="card" width="500" class="card_preview__image">
                                     <div class="card_preview__label">
-                                        <span class="label" data-ng-class="{'label--blue': card.status === 'Activated' && card.cardType === 'Virtual', 'label--yellow': card.status === 'NeedPayment'}" data-ng-hide="card.status === 'Activated'" data-ng-bind="vm.getCardStatusName(card)"></span>
+                                        <span class="label" data-ng-class="{'label--blue': card.status === 'Activated' && card.cardType === 'Virtual', 'label--yellow': card.status === 'NeedPayment' || card.status === 'Pending'}" data-ng-hide="card.status === 'Activated'" data-ng-bind="vm.getCardStatusName(card)"></span>
                                     </div>
                                     <div class="card_preview__info">
                                         <div class="card_preview__number">
@@ -93,7 +93,7 @@
                                         <span data-ng-bind="card.flipped ? 'Cancel' : 'Activate'"></span>
                                     </a>
                                 </div>
-                                <div class="card_actions__item card_actions__item--active" data-ng-click="vm.showPinModal(card)" data-ng-if="card.status !== 'NeedPayment'">
+                                <div class="card_actions__item card_actions__item--active" data-ng-click="vm.showPinModal(card)" data-ng-if="card.status !== 'NeedPayment' || card.status !== 'Pending'">
                                     <a href="">
                                         <i class="icon icon--show_pin"></i>
                                         <span>Show PIN</span>
