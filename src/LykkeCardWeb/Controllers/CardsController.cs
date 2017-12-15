@@ -27,8 +27,8 @@ namespace LykkeCardWeb.Controllers
         {
             try
             {
-                var clientId = User.GetClientId();
-                var cards = await _visaCardClient.GetClientCardsAsync(clientId);
+                string clientId = User.GetClientId();
+                ApiResponse<IEnumerable<VisaCard>> cards = await _visaCardClient.GetClientCardsAsync(clientId);
 
                 return Ok(cards.Result.OrderByDescending(item => item.CreationDate));
             }
@@ -44,8 +44,8 @@ namespace LykkeCardWeb.Controllers
         {
             try
             {
-                var clientId = User.GetClientId();
-                var settings = await _visaCardClient.GetSettingsAndValidateAsync(clientId);
+                string clientId = User.GetClientId();
+                ApiResponse<SettingsResponse> settings = await _visaCardClient.GetSettingsAndValidateAsync(clientId);
                 return Ok(settings);
             }
             catch
@@ -60,10 +60,10 @@ namespace LykkeCardWeb.Controllers
         {
             try
             {
-                var clientId = User.GetClientId();
+                string clientId = User.GetClientId();
                 model.ClientId = clientId;
 
-                var result = await _visaCardClient.CardRequestAsync(model);
+                ApiResponse<CardRequestResponse> result = await _visaCardClient.CardRequestAsync(model);
 
                 return Ok(result);
             }
@@ -79,8 +79,8 @@ namespace LykkeCardWeb.Controllers
         {
             try
             {
-                var clientId = User.GetClientId();
-                var result = await _visaCardClient.GetViewPinTokenAsync(clientId, cardId);
+                string clientId = User.GetClientId();
+                ApiResponse<string> result = await _visaCardClient.GetViewPinTokenAsync(clientId, cardId);
 
                 return Ok(result);
             }
@@ -96,10 +96,10 @@ namespace LykkeCardWeb.Controllers
         {
             try
             {
-                var clientId = User.GetClientId();
+                string clientId = User.GetClientId();
                 model.ClientId = clientId;
 
-                var result = await _visaCardClient.ActivateCardAsync(model);
+                ApiResponse<bool> result = await _visaCardClient.ActivateCardAsync(model);
 
                 return Ok(result);
             }
@@ -115,9 +115,9 @@ namespace LykkeCardWeb.Controllers
         {
             try
             {
-                var clientId = User.GetClientId();
+                string clientId = User.GetClientId();
 
-                var result = await _visaCardClient.SendVisaPaymentAsync(new PaymentRequest{ClientId = clientId, CardId = cardId});
+                ApiResponse<string> result = await _visaCardClient.SendVisaPaymentAsync(new PaymentRequest{ClientId = clientId, CardId = cardId});
 
                 return Ok(result);
             }
@@ -133,9 +133,9 @@ namespace LykkeCardWeb.Controllers
         {
             try
             {
-                var clientId = User.GetClientId();
+                string clientId = User.GetClientId();
 
-                var cardResult = await _visaCardClient.GetClientCardAsync(clientId, cardId);
+                ApiResponse<VisaCard> cardResult = await _visaCardClient.GetClientCardAsync(clientId, cardId);
 
                 if (cardResult.Error == null && (cardResult.Result.Status == CardStatus.Activated || cardResult.Result.Status == CardStatus.Blocked))
                 {

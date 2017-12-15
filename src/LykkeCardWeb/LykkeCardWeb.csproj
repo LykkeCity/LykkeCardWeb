@@ -17,7 +17,7 @@
     <PackageReference Include="Lykke.Common" Version="3.0.2" />
     <PackageReference Include="Lykke.Common.ApiLibrary" Version="1.0.18" />
     <PackageReference Include="Lykke.Logs" Version="3.2.3" />
-    <PackageReference Include="Lykke.Service.Visa.Client" Version="1.0.20" />
+    <PackageReference Include="Lykke.Service.Visa.Client" Version="1.0.24" />
     <PackageReference Include="Lykke.SettingsReader" Version="1.0.43" />
     <PackageReference Include="Lykke.SlackNotifications" Version="1.1.0" />
     <PackageReference Include="Lykke.SlackNotification.AzureQueue" Version="1.0.7" />

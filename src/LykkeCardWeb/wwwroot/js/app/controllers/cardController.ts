@@ -107,7 +107,7 @@ module CardModule {
         }
 
         isProceedDisabled() {
-            return !(this.newCardForm.newCard.cardType === CardType.Virtual && this.newCardForm.newCard.nameOnCard || this.newCardForm.form.$valid) || this.newCardForm.processing;
+            return !(this.newCardForm.newCard.cardType === CardType.Virtual && this.newCardForm.newCard.nameOnCard && this.newCardForm.agree || this.newCardForm.form.$valid) || this.newCardForm.processing;
         }
 
         proceed() {
@@ -284,6 +284,7 @@ module CardModule {
     export class NewCardForm {
         newCard: CardRequest = new CardRequest();
         form: any = {};
+        agree: boolean = false;
         processing: boolean = false;
     }
 
