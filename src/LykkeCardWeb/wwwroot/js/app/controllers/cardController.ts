@@ -6,9 +6,10 @@ module CardModule {
     import IPromise = angular.IPromise;
 
     export class CardController {
-        static $inject = ['$scope', '$interval', '$q', 'ICardService'];
+        static $inject = ['$scope', '$interval', '$timeout', '$q', 'ICardService'];
 
         interval: ng.IIntervalService;
+        timeout: ng.ITimeoutService;
         scope: ng.IScope;
         q: ng.IQService;
 
@@ -21,8 +22,8 @@ module CardModule {
         activateCardForm: ActivateCardForm;
         blockCardForm: BlockCardForm;
 
-        constructor(scope: ng.IScope, interval: ng.IIntervalService, q: ng.IQService, cardService: ICardService) {
-            this.init(scope, interval, q, cardService);
+        constructor(scope: ng.IScope, interval: ng.IIntervalService, timeout: ng.ITimeoutService, q: ng.IQService, cardService: ICardService) {
+            this.init(scope, interval, timeout, q, cardService);
 
             this.pageState.loading = true;
 
@@ -54,9 +55,10 @@ module CardModule {
             });
         }
 
-        private init(scope: ng.IScope, interval: ng.IIntervalService, q: ng.IQService, cardService: ICardService) {
+        private init(scope: ng.IScope, interval: ng.IIntervalService, timeout: ng.ITimeoutService, q: ng.IQService, cardService: ICardService) {
             this.scope = scope;
             this.interval = interval;
+            this.timeout = timeout;
             this.q = q;
             this.cardService = cardService;
             this.data = new Data();
@@ -66,6 +68,31 @@ module CardModule {
             this.viewPinForm = new ViewPinForm();
             this.activateCardForm = new ActivateCardForm();
             this.blockCardForm = new BlockCardForm();
+
+            $('#wc_cors_wrap').on('DOMNodeInserted', () => {
+                this.resetCounter(false);
+                this.viewPinForm.interval = this.interval(() => {
+                    this.scope.$apply(() => { this.viewPinForm.seconds--; });
+
+                    if (this.viewPinForm.seconds <= 0) {
+                        this.viewPinForm.showNote = false;
+                    }
+                }, 1000, null, null, this.viewPinForm);
+
+                this.scope.$apply(() => {
+                    this.viewPinForm.loading = false;
+                    this.viewPinForm.showNote = true;
+                });
+                this.viewPinForm.showNote = true;
+
+            });
+
+            $('#wc_cors_wrap').on('DOMNodeRemoved', () => {
+                this.resetCounter(false);
+                this.scope.$apply(() => {
+                    this.viewPinForm.showNote = false;
+                });
+            });
         }
 
         addCard() {
@@ -126,12 +153,12 @@ module CardModule {
             });
         }
 
-        generateQrCode(id: string):string {
-            return btoa(JSON.stringify({Id: id}));
+        generateQrCode(id: string): string {
+            return btoa(JSON.stringify({ Id: id }));
         }
 
         showPinModal(card: VisaCard) {
-            card.flipped = false; 
+            card.flipped = false;
             this.showCardModal(card, '#modal_showPin');
         }
 
@@ -142,7 +169,7 @@ module CardModule {
         }
 
         showBlockModal(card: VisaCard) {
-            card.flipped = false; 
+            card.flipped = false;
             this.showCardModal(card, '#modal_blockCard');
         }
 
@@ -169,27 +196,6 @@ module CardModule {
                         this.pageState.generalError = result.error.errorMessage;
                     } else {
                         wc_cors.getCardData(result.result);
-
-                        $('#wc_cors_wrap').on('DOMNodeInserted', () => {
-                            this.resetCounter(false);
-
-                            this.viewPinForm.interval = this.interval(() => {
-                                this.scope.$apply(() => { this.viewPinForm.seconds--; });
-                                if (this.viewPinForm.seconds <= 0) {
-                                    this.viewPinForm.showNote = false;
-                                }
-                            }, 1000, null, null, this.viewPinForm);
-
-                            this.scope.$apply(() => {
-                                this.viewPinForm.loading = false;
-                                this.viewPinForm.showNote = true;
-                            });
-                        });
-
-                        $('#wc_cors_wrap').on('DOMNodeRemoved', () => {
-                            this.resetCounter(false);
-                            this.scope.$apply(() => { this.viewPinForm.showNote = false; });
-                        });
                     }
                 });
         }
@@ -250,13 +256,21 @@ module CardModule {
             }
         }
 
-        private resetCounter(reload:boolean) {
-            if (angular.isDefined(this.viewPinForm.interval)) {
-                this.interval.cancel(this.viewPinForm.interval);
+        private resetCounter(reload: boolean) {
+            this.interval.cancel(this.viewPinForm.interval);
 
-                if (reload) {
+            if (reload) {
+                this.stopAllTimeouts();
+                this.timeout(() => {
                     wc_cors.reload();
-                }
+                }, 0);
+            }
+        }
+
+        private stopAllTimeouts() {
+            var id = window.setTimeout(null, 0);
+            while (id--) {
+                window.clearTimeout(id);
             }
         }
 
