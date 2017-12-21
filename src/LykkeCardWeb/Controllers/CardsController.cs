@@ -1,9 +1,10 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Common.Log;
 using Lykke.Service.Visa.Client;
 using Lykke.Service.Visa.Client.AutorestClient.Models;
-using Lykke.Service.Visa.Client.Models;
 using LykkeCardWeb.Extensions;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
@@ -15,26 +16,37 @@ namespace LykkeCardWeb.Controllers
     public class CardsController : Controller
     {
         private readonly IVisaCardClient _visaCardClient;
+        private readonly ILog _log;
 
-        public CardsController(IVisaCardClient visaCardClient)
+        public CardsController(
+            IVisaCardClient visaCardClient,
+            ILog log)
         {
             _visaCardClient = visaCardClient;
+            _log = log;
         }
 
         [HttpGet]
         [Route("all")]
         public async Task<IActionResult> GetCards()
         {
+            string clientId = User.GetClientId();
+
             try
             {
-                string clientId = User.GetClientId();
-                ApiResponse<IEnumerable<VisaCard>> cards = await _visaCardClient.GetClientCardsAsync(clientId);
-
-                return Ok(cards.Result.OrderByDescending(item => item.CreationDate));
+                IEnumerable<VisaCard> cards = await _visaCardClient.GetClientCardsAsync(clientId);
+                return Ok(cards.OrderByDescending(item => item.CreationDate));
             }
-            catch
+            catch (VisaServiceException vex)
             {
-                return BadRequest(new ApiResponse<IEnumerable<VisaCard>> { Error = new ErrorResponse(ValidationError.TechnicalProblem, "Technical problem") });
+                if (vex.Code == ValidationError.TechnicalProblem)
+                    await _log.WriteErrorAsync(nameof(CardsController), nameof(GetCards), clientId, vex);
+                return BadRequest(new { code = vex.Code, message = vex.Message });
+            }
+            catch (Exception ex)
+            {
+                await _log.WriteErrorAsync(nameof(CardsController), nameof(GetCards), clientId, ex);
+                return BadRequest(new { code = ValidationError.TechnicalProblem, message = ex.Message });
             }
         }
 
@@ -42,15 +54,23 @@ namespace LykkeCardWeb.Controllers
         [Route("settings")]
         public async Task<IActionResult> GetSettings()
         {
+            string clientId = User.GetClientId();
+
             try
             {
-                string clientId = User.GetClientId();
-                ApiResponse<SettingsResponse> settings = await _visaCardClient.GetSettingsAndValidateAsync(clientId);
+                SettingsResponse settings = await _visaCardClient.GetSettingsAndValidateAsync(clientId);
                 return Ok(settings);
             }
-            catch
+            catch (VisaServiceException vex)
             {
-                return BadRequest(new ApiResponse<SettingsResponse> { Error = new ErrorResponse(ValidationError.TechnicalProblem, "Technical problem") });
+                if (vex.Code == ValidationError.TechnicalProblem)
+                    await _log.WriteErrorAsync(nameof(CardsController), nameof(GetSettings), clientId, vex);
+                return BadRequest(new { code = vex.Code, message = vex.Message });
+            }
+            catch (Exception ex)
+            {
+                await _log.WriteErrorAsync(nameof(CardsController), nameof(GetSettings), clientId, ex);
+                return BadRequest(new { code = ValidationError.TechnicalProblem, message = ex.Message });
             }
         }
 
@@ -58,18 +78,24 @@ namespace LykkeCardWeb.Controllers
         [Route("createRequest")]
         public async Task<IActionResult> CreateCardRequest([FromBody]CreateCardRequestModel model)
         {
+            string clientId = User.GetClientId();
+
             try
             {
-                string clientId = User.GetClientId();
                 model.ClientId = clientId;
-
-                ApiResponse<CardRequestResponse> result = await _visaCardClient.CardRequestAsync(model);
-
+                CardRequestResponse result = await _visaCardClient.CardRequestAsync(model);
                 return Ok(result);
             }
-            catch
+            catch (VisaServiceException vex)
             {
-                return BadRequest(new ApiResponse<CardCreateResponse>{Error = new ErrorResponse(ValidationError.TechnicalProblem, "Technical problem")});
+                if (vex.Code == ValidationError.TechnicalProblem)
+                    await _log.WriteErrorAsync(nameof(CardsController), nameof(CreateCardRequest), clientId, vex);
+                return BadRequest(new { code = vex.Code, message = vex.Message });
+            }
+            catch (Exception ex)
+            {
+                await _log.WriteErrorAsync(nameof(CardsController), nameof(CreateCardRequest), clientId, ex);
+                return BadRequest(new { code = ValidationError.TechnicalProblem, message = ex.Message });
             }
         }
 
@@ -77,16 +103,23 @@ namespace LykkeCardWeb.Controllers
         [Route("viewPinToken/{cardId}")]
         public async Task<IActionResult> ViewPin(string cardId)
         {
+            string clientId = User.GetClientId();
+
             try
             {
-                string clientId = User.GetClientId();
-                ApiResponse<string> result = await _visaCardClient.GetViewPinTokenAsync(clientId, cardId);
-
-                return Ok(result);
+                string token = await _visaCardClient.GetViewPinTokenAsync(clientId, cardId);
+                return Ok(token);
             }
-            catch
+            catch (VisaServiceException vex)
             {
-                return BadRequest(new ApiResponse<SettingsResponse> { Error = new ErrorResponse(ValidationError.TechnicalProblem, "Technical problem") });
+                if (vex.Code == ValidationError.TechnicalProblem)
+                    await _log.WriteErrorAsync(nameof(CardsController), nameof(ViewPin), clientId, vex);
+                return BadRequest(new { code = vex.Code, message = vex.Message });
+            }
+            catch (Exception ex)
+            {
+                await _log.WriteErrorAsync(nameof(CardsController), nameof(ViewPin), clientId, ex);
+                return BadRequest(new { code = ValidationError.TechnicalProblem, message = ex.Message });
             }
         }
 
@@ -94,18 +127,24 @@ namespace LykkeCardWeb.Controllers
         [Route("activate")]
         public async Task<IActionResult> ActivateCard([FromBody]ActivateCardRequest model)
         {
+            string clientId = User.GetClientId();
+
             try
             {
-                string clientId = User.GetClientId();
                 model.ClientId = clientId;
-
-                ApiResponse<bool> result = await _visaCardClient.ActivateCardAsync(model);
-
+                bool result = await _visaCardClient.ActivateCardAsync(model);
                 return Ok(result);
             }
-            catch
+            catch (VisaServiceException vex)
             {
-                return BadRequest(new ApiResponse<SettingsResponse> { Error = new ErrorResponse(ValidationError.TechnicalProblem, "Technical problem") });
+                if (vex.Code == ValidationError.TechnicalProblem)
+                    await _log.WriteErrorAsync(nameof(CardsController), nameof(ActivateCard), clientId, vex);
+                return BadRequest(new { code = vex.Code, message = vex.Message });
+            }
+            catch (Exception ex)
+            {
+                await _log.WriteErrorAsync(nameof(CardsController), nameof(ActivateCard), clientId, ex);
+                return BadRequest(new { code = ValidationError.TechnicalProblem, message = ex.Message });
             }
         }
 
@@ -113,17 +152,23 @@ namespace LykkeCardWeb.Controllers
         [Route("pay")]
         public async Task<IActionResult> PayCard([FromBody]string cardId)
         {
+            string clientId = User.GetClientId();
+
             try
             {
-                string clientId = User.GetClientId();
-
-                ApiResponse<string> result = await _visaCardClient.SendVisaPaymentAsync(new PaymentRequest{ClientId = clientId, CardId = cardId});
-
+                string result = await _visaCardClient.SendVisaPaymentAsync(new PaymentRequest{ClientId = clientId, CardId = cardId});
                 return Ok(result);
             }
-            catch
+            catch (VisaServiceException vex)
             {
-                return BadRequest(new ApiResponse<SettingsResponse> { Error = new ErrorResponse(ValidationError.TechnicalProblem, "Technical problem") });
+                if (vex.Code == ValidationError.TechnicalProblem)
+                    await _log.WriteErrorAsync(nameof(CardsController), nameof(PayCard), clientId, vex);
+                return BadRequest(new { code = vex.Code, message = vex.Message });
+            }
+            catch (Exception ex)
+            {
+                await _log.WriteErrorAsync(nameof(CardsController), nameof(PayCard), clientId, ex);
+                return BadRequest(new { code = ValidationError.TechnicalProblem, message = ex.Message });
             }
         }
 
@@ -131,29 +176,36 @@ namespace LykkeCardWeb.Controllers
         [Route("block")]
         public async Task<IActionResult> BlockCard([FromBody]string cardId)
         {
+            string clientId = User.GetClientId();
+
             try
             {
-                string clientId = User.GetClientId();
+                VisaCard cardResult = await _visaCardClient.GetClientCardAsync(clientId, cardId);
 
-                ApiResponse<VisaCard> cardResult = await _visaCardClient.GetClientCardAsync(clientId, cardId);
-
-                if (cardResult.Error == null && (cardResult.Result.Status == CardStatus.Activated || cardResult.Result.Status == CardStatus.Blocked))
+                if (cardResult.Status == CardStatus.Activated || cardResult.Status == CardStatus.Blocked)
                 {
                     var result = await _visaCardClient.UpdateCardStatusAsync(new UpdateCardStatusModel
                     {
                         ClientId = clientId,
                         CardId = cardId,
-                        Status = cardResult.Result.Status == CardStatus.Activated ? CardStatus.Blocked : CardStatus.Activated
+                        Status = cardResult.Status == CardStatus.Activated ? CardStatus.Blocked : CardStatus.Activated
                     });
 
-                    return Ok(new {result = result.Result});
+                    return Ok(new {result = result});
                 }
 
                 return Ok(new { result = false });
             }
-            catch
+            catch (VisaServiceException vex)
             {
-                return BadRequest(new ApiResponse<SettingsResponse> { Error = new ErrorResponse(ValidationError.TechnicalProblem, "Technical problem") });
+                if (vex.Code == ValidationError.TechnicalProblem)
+                    await _log.WriteErrorAsync(nameof(CardsController), nameof(BlockCard), clientId, vex);
+                return BadRequest(new { code = vex.Code, message = vex.Message });
+            }
+            catch (Exception ex)
+            {
+                await _log.WriteErrorAsync(nameof(CardsController), nameof(BlockCard), clientId, ex);
+                return BadRequest(new { code = ValidationError.TechnicalProblem, message = ex.Message });
             }
         }
     }

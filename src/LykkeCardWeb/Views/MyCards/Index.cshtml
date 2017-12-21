@@ -36,7 +36,7 @@
                         <div class="card_item" data-ng-repeat="card in vm.data.cards">
                             <div class="card_preview" data-ng-class="{'card_preview--flipped': card.flipped}">
                                 <div class="card_preview__front">
-                                    <img src="images/card.png" alt="card" width="500" class="card_preview__image">
+                                    <img ng-src="{{card.cardType === 'Plastic' ? 'images/card.png' : 'images/card_virtual.png'}}" alt="card" width="500" class="card_preview__image">
                                     <div class="card_preview__label">
                                         <span class="label" data-ng-class="{'label--blue': card.status === 'Activated' && card.cardType === 'Virtual', 'label--yellow': card.status === 'NeedPayment' || card.status === 'Pending'}" data-ng-hide="card.status === 'Activated'" data-ng-bind="vm.getCardStatusName(card)"></span>
                                     </div>
@@ -360,6 +360,7 @@
                                 <div class="spinner_container" data-ng-show="vm.viewPinForm.loading">
                                     <div class="spinner spinner--dark"></div>
                                 </div>
+                                <div data-ng-if="vm.viewPinForm.message" data-ng-bind="vm.viewPinForm.message"></div>
                                 <div id="wc_cors_wrap"></div>
                                 <div data-ng-show="vm.viewPinForm.showNote">Will be visible within <span data-ng-bind="vm.viewPinForm.seconds"></span> seconds.</div>
                             </div>

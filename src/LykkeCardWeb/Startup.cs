@@ -10,7 +10,7 @@ using Lykke.SettingsReader;
 using Lykke.SlackNotification.AzureQueue;
 using LykkeCardWeb.Core.Settings;
 using LykkeCardWeb.Infrastucture;
-using LykkeCardWeb.Mudules;
+using LykkeCardWeb.Modules;
 using Microsoft.AspNetCore.Authentication.Cookies;
 using Microsoft.AspNetCore.Authentication.OpenIdConnect;
 using Microsoft.AspNetCore.Builder;
@@ -78,7 +78,7 @@ namespace LykkeCardWeb
                 {
                     options.SerializerSettings.ContractResolver =
                         new Newtonsoft.Json.Serialization.CamelCasePropertyNamesContractResolver();
-                }); ;
+                });
 
                 var builder = new ContainerBuilder();
 

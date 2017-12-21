@@ -1,7 +1,7 @@
 ﻿module CardModule {
     export interface ICardService {
-        getCards(successCallback: Function): ng.IPromise<void>;
-        getSettings(successCallback: Function): ng.IPromise<void>;
+        getCards(callback: Function): ng.IPromise<void>;
+        getSettings(callback: Function): ng.IPromise<void>;
         createCard(cardRequest: CardRequest, callback: Function);
         getViewPinToken(cardId: string, callback: Function);
         activateCard(request: ActivateCardRequest, callback: Function);
@@ -22,57 +22,57 @@
 
         getCards(callback: Function): ng.IPromise<void> {
             return this.http.get('/api/cards/all').then((data) => {
-                callback(data.data);
+                callback(data);
             }, (error) => {
                 callback(error);
             });
         }
 
-        getSettings(successCallback: Function): ng.IPromise<void> {
+        getSettings(callback: Function): ng.IPromise<void> {
             return this.http.get('/api/cards/settings').then((data) => {
-                successCallback(data.data);
+                callback(data);
             }, (error) => {
-                successCallback(error);
+                callback(error);
             });
         }
 
         createCard(cardRequest: CardRequest, callback: Function) {
             return this.http.post('/api/cards/createRequest', cardRequest).then((data) => {
-                callback(data.data);
-            }, (data) => {
-                callback(data.data);
+                callback(data);
+            }, (error) => {
+                callback(error);
             });
         }
 
         getViewPinToken(cardId: string, callback: Function) {
             return this.http.get('/api/cards/viewPinToken/'+cardId).then((data) => {
-                callback(data.data);
-            }, (data) => {
-                callback(data.data);
+                callback(data);
+            }, (error) => {
+                callback(error);
             });
         }
 
         activateCard(request: ActivateCardRequest, callback: Function) {
             return this.http.post('/api/cards/activate/', request).then((data) => {
-                callback(data.data);
-            }, (data) => {
-                callback(data.data);
+                callback(data);
+            }, (error) => {
+                callback(error);
             });
         }
 
         payCard(cardId: string, callback: Function) {
-            return this.http.post('/api/cards/pay', '"' + cardId + '"').then((data) => {
-                callback(data.data);
-            }, (data) => {
-                callback(data.data);
+            return this.http.post('/api/cards/pay', `"${cardId}"`).then((data) => {
+                callback(data);
+            }, (error) => {
+                callback(error);
             });
         }
 
         blockCard(cardId: string, callback: Function) {
             return this.http.post('/api/cards/block', '"' + cardId + '"').then((data) => {
-                callback(data.data);
-            }, (data) => {
-                callback(data.data);
+                callback(data);
+            }, (error) => {
+                callback(error);
             });
         }
     }
@@ -88,7 +88,7 @@
     }
 
     export enum ServiceErrors {
-        NeedKyc = 1,
-        TechicalProblem = 13
+        NeedKyc = 'NeedKyc',
+        TechnicalProblem = 'TechnicalProblem'
     }
 }

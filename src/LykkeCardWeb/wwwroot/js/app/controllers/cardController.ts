@@ -27,31 +27,30 @@ module CardModule {
 
             this.pageState.loading = true;
 
-            var cardPromise = this.cardService.getCards((cards) => {
-                this.data.cards = cards;
-                console.log('cards');
+            var cardPromise = this.cardService.getCards((result) => {
+                if (result.status === 200) {
+                    this.data.cards = result.data;
+                }
             });
 
             var settingsPromise = this.cardService.getSettings((result) => {
-                if (result.error) {
-                    if (result.error.code === ServiceErrors.TechicalProblem) {
-                        this.pageState.generalError = result.error.errorMessage;
-                        $('#modal_error').modal();
-                    } else {
-                        this.pageState.error = result.error.errorMessage;
-                    }
-                } else {
-                    this.data.settings = result.result.settings;
-                    this.data.settings.isCardCreationFree = result.result.isCardCreationFree;
+                if (result.status === 200) {
+                    this.data.settings = result.data.settings;
                     this.newCardForm.newCard.currency = this.data.settings.availableCurrencies[0];
                     this.updateFee();
-                    console.log('settings');
+                    //TODO: show upgrade to premium based on result.data.wcKycStatus
+                } else {
+                    if (result.data.code === ServiceErrors.TechnicalProblem) {
+                        this.pageState.generalError = result.data.message ? result.data.message : result.data;;
+                        $('#modal_error').modal();
+                    } else {
+                        this.pageState.error = result.data.message ? result.data.message : result.data;;
+                    }
                 }
             });
 
             this.q.all([cardPromise, settingsPromise]).then(() => {
                 this.pageState.loading = false;
-                console.log('all');
             });
         }
 
@@ -142,30 +141,20 @@ module CardModule {
             this.qrCodeForm.qrcode = null;
             this.cardService.createCard(this.newCardForm.newCard, (result) => {
                 this.newCardForm.processing = false;
-                if (result.error) {
-                    this.pageState.generalError = result.error.errorMessage;
-                    $('#modal_error').modal();
-                } else {
-                    this.data.cards.push(result.result.card);
-                    this.qrCodeForm.qrcode = this.generateQrCode(result.result.operationId);
+
+                if (result.status === 200) {
+                    this.data.cards.push(result.data.card);
+                    this.qrCodeForm.qrcode = this.generateQrCode(result.data.operationId);
                     $('#modal_qrcode').modal();
+                } else {
+                    this.pageState.generalError = result.data.message ? result.data.message : result.data;
+                    $('#modal_error').modal();
                 }
             });
         }
 
         generateQrCode(id: string): string {
             return btoa(JSON.stringify({ Id: id }));
-        }
-
-        showPinModal(card: VisaCard) {
-            card.flipped = false;
-            this.showCardModal(card, '#modal_showPin');
-        }
-
-        closeViewPin() {
-            this.resetCounter(true);
-            this.viewPinForm.loading = false;
-            this.viewPinForm.showNote = false;
         }
 
         showBlockModal(card: VisaCard) {
@@ -177,12 +166,27 @@ module CardModule {
             this.blockCardForm.loading = true;
 
             this.cardService.blockCard(this.pageState.card.id, (result) => {
-                if (result) {
-                    this.pageState.card.status = this.pageState.card.status === CardStatus.Activated ? CardStatus.Blocked : CardStatus.Activated;
+                if (result.status === 200) {
+                    if (result.data) {
+                        this.pageState.card.status = this.pageState.card.status === CardStatus.Activated ? CardStatus.Blocked : CardStatus.Activated;
+                    }
                 }
+
                 $('#modal_blockCard').modal('hide');
                 this.blockCardForm.loading = false;
             });
+        }
+
+        showPinModal(card: VisaCard) {
+            card.flipped = false;
+            this.viewPinForm.message = null;
+            this.showCardModal(card, '#modal_showPin');
+        }
+
+        closeViewPin() {
+            this.resetCounter(true);
+            this.viewPinForm.loading = false;
+            this.viewPinForm.showNote = false;
         }
 
         viewPin() {
@@ -190,26 +194,25 @@ module CardModule {
             this.viewPinForm.showNote = false;
             this.viewPinForm.seconds = this.pageState.card.cardType === CardType.Plastic ? 30 : 60;
 
-            this.cardService.getViewPinToken(this.pageState.card.id,
-                (result) => {
-                    if (result.error) {
-                        this.pageState.generalError = result.error.errorMessage;
-                    } else {
-                        wc_cors.getCardData(result.result);
-                    }
-                });
+            this.cardService.getViewPinToken(this.pageState.card.id, (result) => {
+                if (result.status === 200) {
+                    wc_cors.getCardData(result.data);
+                } else {
+                    this.viewPinForm.message = result.data.message ? result.data.message : result.data;
+                }
+            });
         }
 
         activateCard(card: VisaCard) {
             this.activateCardForm.loading = true;
 
             this.cardService.activateCard(new ActivateCardRequest(card.id, this.activateCardForm.pan), (result) => {
-                if (result.error) {
-                    this.activateCardForm.message = result.error.errorMessage;
-                } else {
+                if (result.status === 200) {
                     card.flipped = false;
                     card.status = CardStatus.Activated;
                     card.pan = this.activateCardForm.pan;
+                } else {
+                    this.activateCardForm.message = result.data.message ? result.data.message : result.data;;
                 }
 
                 this.activateCardForm.loading = false;
@@ -230,10 +233,11 @@ module CardModule {
             $('#modal_qrcode').modal();
 
             this.cardService.payCard(cardId, (result) => {
-                if (result.error) {
-                    this.qrCodeForm.message = result.error.errorMessage;
+                if (result.status === 200) {
+                    this.qrCodeForm.qrcode = this.generateQrCode(result.data);
+                    
                 } else {
-                    this.qrCodeForm.qrcode = this.generateQrCode(result.result);
+                    this.qrCodeForm.message = result.data.message ? result.data.message : result.data;
                 }
 
                 this.qrCodeForm.loading = false;
@@ -323,6 +327,7 @@ module CardModule {
         seconds: number = 0;
         loading: boolean = false;
         showNote: boolean = false;
+        message: string = null;
     }
 
     export class ActivateCardForm {
